@@ -1,0 +1,4 @@
+interface:
+  display_name: "视频转3D白模"
+  short_description: "将参考视频还原为可编辑的 Blender 白模，保留原声并核验动作、空间和 4K 交付"
+  default_prompt: "请使用 $video-to-3d-previz，把参考视频还原成 Blender 白模预演，按原片核对空间、画风和动作，并交付可编辑工程、原声视频、上下对照及验收记录。"

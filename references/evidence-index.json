@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "skill_version": "1.2.0",
+  "source": "User-authorized workflow and correction notes from a Blender reference-video previz project; anonymized for public distribution.",
+  "coverage": [
+    "Workflow and deliverables",
+    "Camera and layered auditorium geometry",
+    "Character identity and adaptive focal-marker colors",
+    "Action phases, occlusion, contact and anatomy",
+    "Native/media/visual/provenance review separation",
+    "Mandatory per-invocation online update gate"
+  ],
+  "excluded": [
+    "Original video and Blender files",
+    "Local paths and private contact details",
+    "Conversation identifiers and local audit indexes"
+  ],
+  "limitations": [
+    "Historical case findings are illustrative, not new Blender validations.",
+    "No claim of achieved overall 95 percent similarity."
+  ]
+}

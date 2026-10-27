@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "skill_name": "video-to-3d-previz",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "files": {
     "agents/openai.yaml": {
       "sha256": "b299a61329819d2148a16e51c3b5279111dc4592790d6626cde3908ab1e27977",
@@ -16,7 +16,7 @@
       "size": 6179
     },
     "references/evidence-index.json": {
-      "sha256": "a4fa93dc7c8cf928377edb76baef3cca9760e210f05084f70f4e455303c61f7e",
+      "sha256": "6aa3b96557a8279302629a9f773a46928da20fdd376a2525796a37568ba5186b",
       "size": 840
     },
     "references/lessons-and-case.md": {
@@ -36,20 +36,20 @@
       "size": 3332
     },
     "references/updates.md": {
-      "sha256": "fe0299f53e50e9d5c5dca1020b8d699f639728d7d98c834c40e923748b50b565",
-      "size": 3534
+      "sha256": "03000b01608e9bb2f8157ea06365af980f9602ceab31ee198c05edb7fb80f7c6",
+      "size": 3654
     },
     "references/workflow.md": {
       "sha256": "79c7d4944b20c4453e0cb45b5fdb503078ba9468bea1ba58371dcb490be56666",
       "size": 4731
     },
     "scripts/check_update.py": {
-      "sha256": "aab7d2b9da48b0c6f6339d277d9c6bc772ed50a5c6454d43960fe96618e1ec4d",
-      "size": 16283
+      "sha256": "bb388d6be05c25844ee1cf48a86acc08d4f442e12c02436c22950310a511da91",
+      "size": 17389
     },
     "SKILL.md": {
-      "sha256": "9f3eef048a438ce3cb556e9e566d504ae79f677f57d1b14ba919182dd206c7b5",
-      "size": 5966
+      "sha256": "9194872a673776b34e330e882fb654dbfa6a281ae9febefc1251b10fc357b03f",
+      "size": 5972
     },
     "update-source.json": {
       "sha256": "43b393339c5dccd4eb7e05175236c2fef0691d91158b5b1d6e26594ff3f9b961",

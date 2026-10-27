@@ -256,6 +256,32 @@ class UpdateTests(unittest.TestCase):
         (self.state / 'state.json').write_text('{}')
         self.blocked('INVALID_STATE')
 
+    def test_real_source_queries_git_each_time_without_credentials(self):
+        from types import SimpleNamespace
+        remote = gate.GitHubSource('lx-1203/video-to-3d-previz', 'main')
+        response = SimpleNamespace(returncode=0, stdout='a' * 40 + '\trefs/heads/main\n')
+        with patch.object(gate.subprocess, 'run', return_value=response) as run:
+            self.assertEqual(remote.revision(), 'a' * 40)
+            self.assertEqual(remote.revision(), 'a' * 40)
+        self.assertEqual(run.call_count, 2)
+        self.assertIn('credential.helper=', run.call_args.args[0])
+        self.assertEqual(run.call_args.kwargs['env']['GIT_TERMINAL_PROMPT'], '0')
+
+    def test_git_unavailable_blocks(self):
+        remote = gate.GitHubSource('lx-1203/video-to-3d-previz', 'main')
+        with patch.object(gate.subprocess, 'run', side_effect=FileNotFoundError()):
+            with self.assertRaises(gate.GateError) as ctx:
+                remote.revision()
+        self.assertEqual(ctx.exception.code, 'GIT_REQUIRED')
+
+    def test_git_failure_does_not_use_an_old_commit(self):
+        from types import SimpleNamespace
+        remote = gate.GitHubSource('lx-1203/video-to-3d-previz', 'main')
+        with patch.object(gate.subprocess, 'run', return_value=SimpleNamespace(returncode=128, stdout='')):
+            with self.assertRaises(gate.GateError) as ctx:
+                remote.revision()
+        self.assertEqual(ctx.exception.code, 'NETWORK_ERROR')
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -8,6 +8,7 @@ import json
 import os
 from pathlib import Path, PurePosixPath
 import re
+import subprocess
 import sys
 import time
 import urllib.error
@@ -164,12 +165,28 @@ class GitHubSource:
         return data
 
     def revision(self):
-        url = 'https://api.github.com/repos/' + self.repository + '/git/ref/heads/' + self.branch
-        obj = parse_json(self.get(url, 128 * 1024), 'INVALID_REMOTE_REVISION')
-        commit = obj.get('object', {})
-        if not isinstance(commit, dict) or commit.get('type') != 'commit':
-            raise GateError('INVALID_REMOTE_REVISION', 'Expected a branch pointing to a commit.')
-        return commit.get('sha')
+        remaining = self.deadline - time.monotonic()
+        if remaining <= 0:
+            raise GateError('NETWORK_ERROR', 'Update check exceeded its time budget.')
+        ref = 'refs/heads/' + self.branch
+        command = ['git', '-c', 'credential.helper=', '-c', 'credential.interactive=false',
+                   'ls-remote', '--exit-code', '--refs',
+                   'https://github.com/' + self.repository + '.git', ref]
+        env = {**os.environ, 'GIT_TERMINAL_PROMPT': '0', 'GCM_INTERACTIVE': 'Never',
+               'GIT_TRACE': '0', 'GIT_TRACE_CURL': '0', 'GIT_CURL_VERBOSE': '0'}
+        try:
+            result = subprocess.run(command, capture_output=True, text=True, encoding='utf-8',
+                                    timeout=min(25, remaining), env=env)
+        except FileNotFoundError as exc:
+            raise GateError('GIT_REQUIRED', 'Install Git before using the update gate.') from exc
+        except (subprocess.TimeoutExpired, OSError) as exc:
+            raise GateError('NETWORK_ERROR', 'GitHub remote check failed; no offline fallback.') from exc
+        if result.returncode != 0:
+            raise GateError('NETWORK_ERROR', 'GitHub remote branch is unreachable; no offline fallback.')
+        rows = [line.split() for line in result.stdout.splitlines() if line.strip()]
+        if len(rows) != 1 or len(rows[0]) != 2 or rows[0][1] != ref:
+            raise GateError('INVALID_REMOTE_REVISION', 'Expected exactly the configured remote branch.')
+        return rows[0][0]
 
     def file(self, revision, path):
         return self.get('https://raw.githubusercontent.com/' + self.repository + '/' + revision + '/' + path, MAX_FILE)

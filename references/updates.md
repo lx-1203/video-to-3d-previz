@@ -1,6 +1,6 @@
 # 每次调用前强制更新
 
-此技能以 `update-source.json` 登记的GitHub公开仓库main分支为发布源。Python 3.10+即可运行更新脚本，无第三方Python依赖、GitHub令牌或桌面维护目录依赖。
+此技能以 `update-source.json` 登记的GitHub公开仓库main分支为发布源。更新脚本需要Python 3.10+与Git，无第三方Python依赖、GitHub令牌或桌面维护目录依赖。每次通过git ls-remote查询远端分支，然后从固定commit下载文件，不占用GitHub匿名REST API配额。
 
 每次新调用，包括同一聊天中再次调用，都先运行安装目录的 `scripts/check_update.py`。这不是定时检查或“一天一次”：每次成功放行都必须重新联网确认远端提交，同时校验本地文件。不要复用上一轮的输出或内存里的技能正文。
 

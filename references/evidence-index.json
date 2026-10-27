@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "skill_version": "1.2.0",
+  "skill_version": "1.2.1",
   "source": "User-authorized workflow and correction notes from a Blender reference-video previz project; anonymized for public distribution.",
   "coverage": [
     "Workflow and deliverables",

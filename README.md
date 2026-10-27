@@ -18,7 +18,7 @@ python <安装目录>/video-to-3d-previz/scripts/check_update.py
 
 ## 维护验证
 
-Python 3.10+，更新器和测试仅用标准库。在维护仓库中：
+Python 3.10+与Git；Python代码和测试仅用标准库。远端检查使用git ls-remote，无需GitHub令牌或匿名REST API配额。在维护仓库中：
 
 ```text
 python -m unittest discover -s tests -v

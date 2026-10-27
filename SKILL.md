@@ -2,7 +2,7 @@
 name: video-to-3d-previz
 description: 调用前必须执行scripts/check_update.py并通过联网更新门禁。Use when 用户要求视频转3D白模、视频转白膜、Blender 白模预演、按实拍复刻镜头和动作、带原声的上下对比视频，或修订与验收此类工程的空间、画风、遮挡、人物接触及交付版本。适用于参考视频到可编辑三维预演，不用于仅剪辑视频或单张图片生成模型。
 metadata:
-  version: "1.2.0"
+  version: "1.2.1"
 ---
 
 # 视频转3D白模
@@ -13,7 +13,7 @@ metadata:
 
 ## 每次调用前的强制入口
 
-在使用任何制作流程之前，执行当前安装目录的 `scripts/check_update.py`（Python 3.10+）。包括同一聊天的再次调用，每次都必须联网检查，不缓存放行。只有退出码0、status为current或updated且rerun_required=false才能重新读取返回的skill_file并继续；若rerun_required=true，必须先用新版更新器再检查一次。
+在使用任何制作流程之前，执行当前安装目录的 `scripts/check_update.py`（Python 3.10+与Git）。包括同一聊天的再次调用，每次都必须联网检查，不缓存放行。只有退出码0、status为current或updated且rerun_required=false才能重新读取返回的skill_file并继续；若rerun_required=true，必须先用新版更新器再检查一次。
 
 任何失败、缺失结果或未执行检查都禁止使用本技能；不得离线用旧版、伪造通过、改manifest或删除活跃锁。本地改动必须保留并解决。更新实现与故障处理见[强制更新规则](references/updates.md)。
 

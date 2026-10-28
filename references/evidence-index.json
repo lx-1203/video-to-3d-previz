@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "skill_version": "1.3.0",
+  "skill_version": "1.3.2",
   "source": "User-authorized workflow and correction notes from a Blender reference-video previz project; anonymized for public distribution.",
   "coverage": [
     "Workflow and deliverables",
@@ -12,7 +12,10 @@
     "Action phases, occlusion, contact and anatomy",
     "Walking, gestures, cheek greetings and visible hand-held props",
     "Native/media/visual/provenance review separation",
-    "Mandatory per-invocation online update gate"
+    "Mandatory per-invocation online update gate",
+    "User-defined shoulder lines, sketched body-box scope and actual visible silhouettes",
+    "Cropped comparison screenshots, furniture orientation and continuous hidden routes",
+    "Explicit stop-and-export requests, per-clip source selection and open-feedback delivery"
   ],
   "excluded": [
     "Original video and Blender files",

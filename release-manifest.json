@@ -1,35 +1,35 @@
 {
   "schema_version": 1,
   "skill_name": "video-to-3d-previz",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "files": {
     "agents/openai.yaml": {
       "sha256": "b299a61329819d2148a16e51c3b5279111dc4592790d6626cde3908ab1e27977",
       "size": 389
     },
     "references/character-and-motion.md": {
-      "sha256": "811cc4cd92f9ed633b8f3268375e14da3ec39ccf7607af1e98ecb7122cf3d05d",
-      "size": 12819
+      "sha256": "33239913ab3815ec96d678f6095334dd8fac2b8de3ba11e3cb4ab03d646f3a80",
+      "size": 13756
     },
     "references/delivery-and-audio.md": {
-      "sha256": "adecc35014da8eaf2704ccb901ec6051225ab2ec6aad36a58062c156b6c9bc1b",
-      "size": 6179
+      "sha256": "7fbdf6d7fb9f4b972342aebb1202d40bcb881e48ca77773eeb62dff7154acf5a",
+      "size": 7031
     },
     "references/evidence-index.json": {
       "sha256": "199b9e3f586440087c903fe43950eddd480007e8a49f5580007a256c0b8fc46e",
       "size": 1137
     },
     "references/lessons-and-case.md": {
-      "sha256": "23717ab95689eb57ac535e6a403d153f0250159988f8ed2ca247ff45d95c2c02",
-      "size": 9856
+      "sha256": "bf87c2f9be3a708c6fecaf76d8f735b2fd37262ee6a062b48bf53652b78628ea",
+      "size": 10753
     },
     "references/quality-gates.md": {
       "sha256": "878aea9c33d18e5b1f332c5b48f3a71fb32e3a0be72b19e405aa80afbc1e89c8",
       "size": 6874
     },
     "references/reference-and-camera.md": {
-      "sha256": "dfb441567c14dae11057c617eb4a955da93d3868f99f635fd37d631d891df0fc",
-      "size": 6563
+      "sha256": "1b4378c6368c6948876c30c1e57f03b65a121297e855ba762568b3044ab15f89",
+      "size": 7052
     },
     "references/task-template.md": {
       "sha256": "0ac51b8bea6624c37b887942fe2f9b1ea6a3e4ed08cd39fabde6fbc316cade84",
@@ -48,7 +48,7 @@
       "size": 17389
     },
     "SKILL.md": {
-      "sha256": "18ff42badafe54d32f2cce14fcedde2caf5c5190f16e7bcfa832aa39224e881f",
+      "sha256": "228287ae11bfc99c3a1ae7616a394fd2d6d9d1e39732b66e2a7858cfa679bdf7",
       "size": 6512
     },
     "update-source.json": {

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "skill_name": "video-to-3d-previz",
-  "version": "1.3.6",
+  "version": "1.3.7",
   "files": {
     "agents/openai.yaml": {
       "sha256": "b299a61329819d2148a16e51c3b5279111dc4592790d6626cde3908ab1e27977",
@@ -12,36 +12,36 @@
       "size": 22441
     },
     "references/delivery-and-audio.md": {
-      "sha256": "fe5356500a8e080a2f72feb80dc507928bae019b31d6037e82f5903528719b9e",
-      "size": 9690
+      "sha256": "5058e2e6da4a45cb9782f41c1c229c88bfdc80e2ece456a7085d6966d4449b9c",
+      "size": 11773
     },
     "references/evidence-index.json": {
-      "sha256": "af02b661ac9ff3e1886a236e6041645f7e926141cb144febf75ba1f3ce0a091d",
-      "size": 1816
+      "sha256": "b680510999002cf713b08be0d5ddd6b4e161fb1ab7af11f313e01a37ae78abdd",
+      "size": 2014
     },
     "references/lessons-and-case.md": {
       "sha256": "85f9114dfa5253f0b70a475886c6d5c3a6c85c466c21bd28bac2db13e153afc2",
       "size": 14863
     },
     "references/quality-gates.md": {
-      "sha256": "d7fe0e51ccc7bed10cd667dc7ab924c2d1332128be0e805e73c092ebf4403a34",
-      "size": 13403
+      "sha256": "ae1f8085fe0fc90c4f4b3b42dcf81e3916b7e8465ffe7029425c6a3526269b27",
+      "size": 13849
     },
     "references/reference-and-camera.md": {
       "sha256": "d4c3e8153e1c5c699a2b0ba74b854bfcb4d00eb22c85de32df45a8e31508acb7",
       "size": 8199
     },
     "references/task-template.md": {
-      "sha256": "765dfccdbc3d41d6f319b65442a2b49aab8a75bb3a6a94fb234f4838dbd81ac8",
-      "size": 4877
+      "sha256": "64228a0f6c7d89739767e61c35a2dacc2bc1d3b550d4334ca467bd4080c1f342",
+      "size": 5388
     },
     "references/updates.md": {
       "sha256": "03000b01608e9bb2f8157ea06365af980f9602ceab31ee198c05edb7fb80f7c6",
       "size": 3654
     },
     "references/workflow.md": {
-      "sha256": "0c7269a4238062a7d8da5175b843cfa5e68ede6e6936e194504aa629049be520",
-      "size": 6728
+      "sha256": "2e61e93854c68f8706563d221414993f91565cf1ff2e44806e0d15e492600ed6",
+      "size": 7799
     },
     "scripts/check_update.py": {
       "sha256": "bb388d6be05c25844ee1cf48a86acc08d4f442e12c02436c22950310a511da91",
@@ -52,8 +52,8 @@
       "size": 4480
     },
     "SKILL.md": {
-      "sha256": "dbee97fde79e86e8ecc17f926ac35a6125af9b4b2379a9b3cb77ceb22dac8b9b",
-      "size": 7277
+      "sha256": "3ccf66797bf4064df28e44f92ae76c07fa437a589ab4c0b9ebe140faf9b1c478",
+      "size": 7443
     },
     "update-source.json": {
       "sha256": "43b393339c5dccd4eb7e05175236c2fef0691d91158b5b1d6e26594ff3f9b961",

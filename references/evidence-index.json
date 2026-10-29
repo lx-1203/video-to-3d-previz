@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "skill_version": "1.3.3",
+  "skill_version": "1.3.4",
   "source": "User-authorized workflow and correction notes from a Blender reference-video previz project; anonymized for public distribution.",
   "coverage": [
     "Workflow and deliverables",
@@ -18,7 +18,8 @@
     "Explicit stop-and-export requests, per-clip source selection and open-feedback delivery",
     "Per-feedback per-role review coverage, rejected-baseline controls and review-ledger integrity",
     "Torso facing, all-character screen alignment, arm-over-palm silhouette and continuous prop entrance",
-    "Client-specified geometry and rig provenance without distributing private assets"
+    "Client-specified geometry and rig provenance without distributing private assets",
+    "Locomotion versus torso/foot facing, same-frame gesture phases and all-character collision coverage"
   ],
   "excluded": [
     "Original video and Blender files",

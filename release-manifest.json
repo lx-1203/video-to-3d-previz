@@ -1,31 +1,31 @@
 {
   "schema_version": 1,
   "skill_name": "video-to-3d-previz",
-  "version": "1.3.3",
+  "version": "1.3.4",
   "files": {
     "agents/openai.yaml": {
       "sha256": "b299a61329819d2148a16e51c3b5279111dc4592790d6626cde3908ab1e27977",
       "size": 389
     },
     "references/character-and-motion.md": {
-      "sha256": "dd5388acaa7e0354213813d1b8d920d6de5d75d275b76eca0c81c36eff55cedf",
-      "size": 18705
+      "sha256": "441b656f1e3c3243da2bdc88809092eae466024d976b9f90a3c3737107f9011e",
+      "size": 20499
     },
     "references/delivery-and-audio.md": {
       "sha256": "fe5356500a8e080a2f72feb80dc507928bae019b31d6037e82f5903528719b9e",
       "size": 9690
     },
     "references/evidence-index.json": {
-      "sha256": "63b5a53ea53fead82ffdfc5284dd8593fb403cf6e6f1ef925fde7bae8b6fb0f9",
-      "size": 1709
+      "sha256": "05848aee025c8f44df1912df5175985e43c024456d3c97a37a6bcf7a06aaa892",
+      "size": 1816
     },
     "references/lessons-and-case.md": {
-      "sha256": "89f013b5d4513225e111d60b79635a28e7aad8ff681480bfd55801ac7a681b2d",
-      "size": 14301
+      "sha256": "85f9114dfa5253f0b70a475886c6d5c3a6c85c466c21bd28bac2db13e153afc2",
+      "size": 14863
     },
     "references/quality-gates.md": {
-      "sha256": "f0f39382624638db72fc1eb8b6e8ab9acf97868937ca6cc6f3f918f7e2910214",
-      "size": 12493
+      "sha256": "f936dac9218a88766831f08864f13460a3dc402c1a6c018bca71b31ebce0942c",
+      "size": 12841
     },
     "references/reference-and-camera.md": {
       "sha256": "d4c3e8153e1c5c699a2b0ba74b854bfcb4d00eb22c85de32df45a8e31508acb7",
@@ -52,7 +52,7 @@
       "size": 4480
     },
     "SKILL.md": {
-      "sha256": "43dd94632aca30374affc36f94c28ef681776c2b7079d3ad2e49c2c6fffe210d",
+      "sha256": "633d24ad91d7ed60b15e2e9082494ce98261cae6a3ec7246f485da463ba054dd",
       "size": 7277
     },
     "update-source.json": {

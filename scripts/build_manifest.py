@@ -12,7 +12,8 @@ def main():
     if not (root / '.git').exists():
         raise SystemExit('Run from the maintenance Git repository, not an installed skill.')
     paths = [root / 'SKILL.md', root / 'agents/openai.yaml', root / 'update-source.json',
-             root / 'scripts/check_update.py', root / 'scripts/validate_review_coverage.py']
+             root / 'scripts/check_update.py', root / 'scripts/validate_review_coverage.py',
+             root / 'scripts/content_audit.py']
     paths.extend(p for p in (root / 'references').rglob('*') if p.is_file())
     data = {p.relative_to(root).as_posix(): p.read_bytes() for p in sorted(paths)}
     version = re.search(r'^\s+version:\s*"(\d+\.\d+\.\d+)"', data['SKILL.md'].decode(), re.M)[1]

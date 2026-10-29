@@ -75,6 +75,20 @@ AAC不是PCM位深格式。不要用播放器显示的 float sample format 来�
 3. 采用自动检测或汇总判定时，用实际可解码的故障媒体验证：末尾短黑屏应被定位；上栏有画面但下栏黑屏不能漏报。确认故障会让对应内容检查及完整验收状态保持失败，而非只落入旁路计数。测试素材不冒充当前成片证据。
 4. 记录实际人工所看帧及未覆盖范围。异常按当前适用要求处理，不以“已解码”或通用的部分交稿流程宣称满足尚未通过的正式验收条件。用户另行明确改变交付范围或要求先看候选时，记录范围变化并交付所选文件，保留真实未通过项；附件不覆盖用户当前明确指令，交付许可也不把未通过项变成验收合格。
 
+### 内容扫描工具
+
+使用包内 `scripts/content_audit.py`，不再临时用稀疏抽帧代替全片内容扫描。运行环境为 Python 3.10+、PyAV、NumPy、Pillow；缺依赖时按环境许可安装 `python -m pip install av numpy Pillow`，工具不自行安装依赖。
+
+```sh
+python scripts/content_audit.py --reference original.mp4 --white white.mp4 --comparison comparison.mp4 --out content-audit-new
+```
+
+三个输入须共用起点且时间轴未变，对照须等高上下两栏；有剪辑、偏移或变速时先明确映射，不能把最近PTS匹配当作重定时。输出目录须为空或不存在。工具完整解码每个输入，逐帧记录PTS、全画面及对照各栏的亮度/暗像素比例/重复亮度哈希，按相对PTS匹配原片，汇总近黑候选与未匹配帧。默认近黑候选为灰度值≤10的像素达到98%；阈值可用 `--luma-threshold`、`--dark-fraction` 调整并进入报告。
+
+工具以相邻PTS确定非末帧的显示区间，按末帧已知显示时长确定结束时间，导出末秒所有显示帧及上下栏的解码尺寸JPEG、联系表和SHA，包含跨越末秒起点的VFR帧；文件名帧号为零基。末帧时长缺失时，从末帧PTS前一秒保守扩大导出，`duration_seconds` 为null、`tail_extraction_status` 为 `conservative_unverified`，并登记 `timing_review_items`，不把名义帧率估值当作准确片尾。
+
+`content_report.json` 的 `content_scan_complete` 只表示执行完成；近黑候选、PTS未匹配或片尾时长不确定时为 `review_required`，`visual_acceptance` 始终是 `unverified`。退出码0不表示视觉通过，非零表示执行错误；重复亮度哈希仅作观察，不据此把正常静止判为冻结。人工查看范围另行登记；动作、穿插、非近黑遮挡、闪烁和音轨仍按原验收流程核对。
+
 ## 赶稿时冻结与导出
 
 用户明确说“先出一版”“别补了，赶快导出”时，停止新增造型、动作、空间候选和扩大审查，通知协作者同样收束。不要一边答应导出一边继续试修；保留进行中的失败候选，完成已冻结版本所需的导出与核验即可。

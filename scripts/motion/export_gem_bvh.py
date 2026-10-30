@@ -154,9 +154,13 @@ def export(input_path, assets, output_path, fps):
     # only the reconstruction symbols and dtypes emitted by this GEM release;
     # keep weights_only and reject object arrays or arbitrary pickle globals.
     numpy_core = np._core if hasattr(np, "_core") else np.core
-    numeric_globals = [numpy_core.multiarray._reconstruct, np.ndarray, np.dtype]
+    numeric_globals = [bytes, numpy_core.multiarray._reconstruct, np.ndarray, np.dtype]
     numeric_globals.extend(type(np.dtype(kind)) for kind in (np.float32, np.int32, np.int64, np.bool_))
-    with torch.serialization.safe_globals(numeric_globals):
+    # safe_globals removes its own additions on exit. Do not remove symbols
+    # which a caller had already registered before this scoped load.
+    existing = torch.serialization.get_safe_globals()
+    additions = [symbol for symbol in numeric_globals if symbol not in existing]
+    with torch.serialization.safe_globals(additions):
         result = torch.load(input_path, map_location="cpu", weights_only=True)
     if not isinstance(result, dict) or "pred_soma_params_global" not in result:
         raise ValueError("Expected current GEM-X Motion output with pred_soma_params_global")

@@ -8,6 +8,8 @@
 
 已合并原视频动作工作台：从本入口按[内置动作工作流](references/motion-workflow.md)调用 `scripts/motion/motion_workbench.py`，完成视频动作/BVH、指定模型接入和整段原声检查对照。无需另装同名companion技能；后端运行环境、权重、Blender/FFmpeg及私有模板/profile仍单独配置。动作检查后继续原有场景、接触和正式交付流程。
 
+需要复制到其他 Windows＋NVIDIA 电脑时，使用[接单工具与便携安装](references/order-toolkit.md)的构建器与安装器。私有模板和真实插件 ZIP 在本机加入私有包；公共仓库仅发布工具。安装器重建本机路径，不携带旧环境、权重、任务或客户影片。
+
 安装到Codex技能目录的`video-to-3d-previz`文件夹。复制`release-manifest.json`以及其中列出的运行文件，勿把整个Git仓库（含.git、README和tests）当成安装目录。然后在本机生效的AGENTS.md写入[调用前更新规则](references/updates.md)。
 
 每次调用前运行：

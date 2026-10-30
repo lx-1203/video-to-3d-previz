@@ -13,9 +13,11 @@ def main():
         raise SystemExit('Run from the maintenance Git repository, not an installed skill.')
     paths = [root / 'SKILL.md', root / 'agents/openai.yaml', root / 'update-source.json',
              root / 'scripts/check_update.py', root / 'scripts/validate_review_coverage.py',
+             root / 'scripts/validate_skeleton_overlay.py',
              root / 'scripts/content_audit.py']
     paths.extend(p for p in (root / 'references').rglob('*') if p.is_file())
     paths.extend((root / 'scripts/motion').glob('*.py'))
+    paths.extend((root / 'scripts/portable').glob('*.py'))
     data = {p.relative_to(root).as_posix(): p.read_bytes() for p in sorted(paths)}
     version = re.search(r'^\s+version:\s*"(\d+\.\d+\.\d+)"', data['SKILL.md'].decode(), re.M)[1]
     manifest = {'schema_version': 1, 'skill_name': 'video-to-3d-previz', 'version': version,

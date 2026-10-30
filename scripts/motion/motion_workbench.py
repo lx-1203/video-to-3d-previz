@@ -220,7 +220,8 @@ def run_logged(argv, log, *, cwd=None, env=None):
 
 def task_environment(directory):
     env = os.environ.copy()
-    env.update(PYTHONUTF8='1', PYTHONIOENCODING='utf-8', HF_HUB_DISABLE_IMPLICIT_TOKEN='1')
+    env.update(PYTHONUTF8='1', PYTHONIOENCODING='utf-8', HF_HUB_DISABLE_IMPLICIT_TOKEN='1',
+               PYTHONDONTWRITEBYTECODE='1')
     for name, subdir in {'TEMP':'temp','TMP':'temp','HF_HOME':'hf','HF_XET_CACHE':'xet',
                          'WARP_CACHE_PATH':'warp','PYTORCH_EXTENSIONS_DIR':'torch_extensions',
                          'MPLCONFIGDIR':'matplotlib'}.items():
@@ -659,6 +660,10 @@ def main(argv=None):
 
 
 if __name__ == '__main__':
+    # Protected installed skills permit only manifested source files. Keep
+    # both this CLI and Python/Blender descendants from creating helper pyc.
+    sys.dont_write_bytecode = True
+    os.environ['PYTHONDONTWRITEBYTECODE'] = '1'
     if hasattr(sys.stdout, 'reconfigure'):
         sys.stdout.reconfigure(encoding='utf-8')
     raise SystemExit(main())

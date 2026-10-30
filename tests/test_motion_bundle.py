@@ -25,7 +25,9 @@ class MotionBundleTests(unittest.TestCase):
         expected = {'scripts/motion/' + name for name in TOOLS}
         expected |= {'references/motion-workflow.md', 'references/motion/protocol.md',
                      'references/motion/order-workflow.md', 'references/motion/lightweight.md',
-                     'references/motion/notices.md'}
+                     'references/motion/notices.md', 'references/order-toolkit.md',
+                     'references/skeleton-overlay-contract.md', 'scripts/validate_skeleton_overlay.py',
+                     'scripts/portable/build_bundle.py', 'scripts/portable/install_bundle.py'}
         self.assertTrue(expected.issubset(self.manifest['files']),
                         sorted(expected - set(self.manifest['files'])))
         self.assertFalse(any(p.endswith('SKILL.md') and p != 'SKILL.md'
@@ -55,6 +57,10 @@ class MotionBundleTests(unittest.TestCase):
             self.assertFalse(json.loads(proc.stdout)['ok'])
             for name in ('motion_workbench.py', 'setup_backend.py', 'mediapipe_motion.py'):
                 proc = subprocess.run([sys.executable, str(cli.with_name(name)), '--help'],
+                                      capture_output=True, text=True, encoding='utf-8')
+                self.assertEqual(proc.returncode, 0, proc.stderr)
+            for name in ('build_bundle.py', 'install_bundle.py'):
+                proc = subprocess.run([sys.executable, str(installed / 'scripts/portable' / name), '--help'],
                                       capture_output=True, text=True, encoding='utf-8')
                 self.assertEqual(proc.returncode, 0, proc.stderr)
             # Normal tool use must not create unmanaged __pycache__ in the protected package.

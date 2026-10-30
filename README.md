@@ -6,6 +6,8 @@
 
 调用名：`$video-to-3d-previz`。技能正文在[SKILL.md](SKILL.md)，公开版仅包含通用方法和匿名案例，不包含原视频、Blender工程、个人路径或会话记录。
 
+已合并原视频动作工作台：从本入口按[内置动作工作流](references/motion-workflow.md)调用 `scripts/motion/motion_workbench.py`，完成视频动作/BVH、指定模型接入和整段原声检查对照。无需另装同名companion技能；后端运行环境、权重、Blender/FFmpeg及私有模板/profile仍单独配置。动作检查后继续原有场景、接触和正式交付流程。
+
 安装到Codex技能目录的`video-to-3d-previz`文件夹。复制`release-manifest.json`以及其中列出的运行文件，勿把整个Git仓库（含.git、README和tests）当成安装目录。然后在本机生效的AGENTS.md写入[调用前更新规则](references/updates.md)。
 
 每次调用前运行：
@@ -19,6 +21,8 @@ python <安装目录>/video-to-3d-previz/scripts/check_update.py
 ## 维护验证
 
 Python 3.10+与Git；更新门禁和覆盖账本只用标准库。内容扫描工具及其真实媒体回归测试另需PyAV、NumPy、Pillow（`python -m pip install av numpy Pillow`），使用PyAV编解码，不依赖固定FFmpeg可执行文件路径。远端检查使用git ls-remote，无需GitHub令牌或匿名REST API配额。在维护仓库中：
+
+完整动作回归还需已配置的GEM/SOMA后端环境及PyTorch、SciPy。运行完整测试时，将下方 `python` 换为该环境的解释器，并把 `FFMPEG_EXE` 设为本机FFmpeg的完整路径；缺少该路径时真实音轨边界用例会跳过，跳过不能计作通过。动作状态CLI本身仍只依赖标准库，使用者按[动作工作流](references/motion-workflow.md)配置所需阶段。
 
 ```text
 python -m unittest discover -s tests -v

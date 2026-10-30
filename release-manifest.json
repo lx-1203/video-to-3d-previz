@@ -112,8 +112,8 @@
       "size": 18223
     },
     "scripts/portable/install_bundle.py": {
-      "sha256": "b8da192bab3e9c7f051c5ff5de64ab2a5c88f818e004054492fd3eb59cb3ca73",
-      "size": 16692
+      "sha256": "8be2b48fd7646c6f4570ff89ca78e48f473441464641af6ee6675eed7df4bd90",
+      "size": 17249
     },
     "scripts/validate_review_coverage.py": {
       "sha256": "8dc763d780c3ee0d994cd31e1ad3aa334569c080b97ccd56d67956c5b5d64074",

@@ -222,6 +222,7 @@ def _catalog(manifest, manifest_sha, target, skills_root):
     cli = public / 'scripts/motion/motion_workbench.py'
     setup = public / 'scripts/motion/setup_backend.py'
     gate = public / 'scripts/check_update.py'
+    overlay_entries = ('scripts/validate_skeleton_overlay.py', 'references/skeleton-overlay-contract.md')
     workspace = target / 'backend'
     def asset(name):
         rel = 'payload/skills/' + manifest['private_skill']['name'] + '/assets/' + name
@@ -234,6 +235,14 @@ def _catalog(manifest, manifest_sha, target, skills_root):
         'template': asset('client_character.blend'),
         'source_original': asset('client_source_original.blend'),
         'cli': {'path': str(cli), 'command': [sys.executable, str(cli)]},
+        'skeleton_overlay': {
+            'checker_path': str(public / overlay_entries[0]),
+            'contract_path': str(public / overlay_entries[1]),
+            'schema': 'skeleton_overlay_v1', 'required_before_submission': True,
+            'executed': False,
+            'bundled': all('payload/skills/' + manifest['public_skill']['name'] + '/' + entry
+                           in manifest['files'] for entry in overlay_entries),
+        },
         'profiles': [dict(record, path=str(_destination(record['path'], target, skills_root)))
                      for record in sorted(manifest['profiles'], key=lambda item: item['path'])],
         'addons': [dict(record, path=str(_destination(record['path'], target, skills_root)), installed=False)

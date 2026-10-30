@@ -232,14 +232,29 @@ def _private_payload(root: Path) -> tuple[dict[str, bytes], list[dict]]:
     return payload, [normalization]
 
 
-def _check_profile(value: object) -> None:
+def _check_profile_description(value: str) -> None:
+    # Only human limitations may contain word/word prose, never host/file paths.
+    if ("\\" in value or "${" in value
+            or re.search(r"(?<!\w)[A-Za-z]:|(?<!\w)/\S|\.\./|~(?:/|\w+/)", value)
+            or re.search(r"\$[A-Za-z_]\w*|%[A-Za-z_]\w*%|\bfile:", value, re.I)
+            or re.search(r"/[^\s/]*\.[A-Za-z0-9]+|[^\s/]*\.[A-Za-z0-9]+/", value)):
+        raise ValueError("Profile limitations must not contain file paths or host configuration")
+
+
+def _check_profile(value: object, *, root: bool = True) -> None:
     if isinstance(value, dict):
         for key, child in value.items():
-            _check_profile(key)
-            _check_profile(child)
+            _check_profile(key, root=False)
+            if root and key == "limitations":
+                if not isinstance(child, list) or any(not isinstance(item, str) for item in child):
+                    raise ValueError("Profile limitations must be a list of descriptive strings")
+                for item in child:
+                    _check_profile_description(item)
+            else:
+                _check_profile(child, root=False)
     elif isinstance(value, list):
         for child in value:
-            _check_profile(child)
+            _check_profile(child, root=False)
     elif isinstance(value, str):
         # Profiles describe bones and coordinates, not paths or host configuration.
         if ("/" in value or "\\" in value or re.match(r"[A-Za-z]:", value)

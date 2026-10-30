@@ -20,6 +20,8 @@ python <skill>/scripts/portable/build_bundle.py --skill <skill> --private-skill 
 
 多个 profile 重复传入 `--profile`。输出必须是新文件，放在公共仓库之外。构建器按公开发布清单逐字节校验运行文件；私有合同中的原模板来源字段仅在包内相对化，原文件不改。随包保留两份模板、规范、候选 profile、插件 ZIP、安装器和逐文件 SHA。包内的原始 `.blend` 仍须禁用自动执行；本工具不打开它。
 
+profile 的顶层 `limitations` 允许纯文本列表中的普通斜杠表达（如 `hand/finger`），原字节保留；它不能容纳路径或嵌套配置。其他结构字段继续禁止本机路径，不能为通过打包而删除候选状态或适配限制。
+
 不复制旧 venv、GPU 权重、缓存、任务、原片、试验成片或 `config.local.json`。这些内容要么由目标机器重建，要么通过另行核对的项目迁移交接，不能混入工具包。客户资产只给获授权的电脑，不上传公共发布源。
 
 ## 在目标 Windows＋NVIDIA 电脑安装

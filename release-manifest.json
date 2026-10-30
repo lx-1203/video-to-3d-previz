@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "skill_name": "video-to-3d-previz",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "files": {
     "agents/openai.yaml": {
       "sha256": "b299a61329819d2148a16e51c3b5279111dc4592790d6626cde3908ab1e27977",
@@ -44,8 +44,8 @@
       "size": 4540
     },
     "references/order-toolkit.md": {
-      "sha256": "ce82ca0d53d106387593a06fa4cb62557f0be08175262d3e2747c3b07a4ee3eb",
-      "size": 4987
+      "sha256": "1c76d6d7565bd9ca010a7afe54436d5141fc1c6e037ece4af1cd8949d5bdc1e3",
+      "size": 5254
     },
     "references/quality-gates.md": {
       "sha256": "58c3deaec900744710ec01964bdcc2d401c549f39f8de2e542751c7f6222840d",
@@ -112,8 +112,8 @@
       "size": 7850
     },
     "scripts/portable/build_bundle.py": {
-      "sha256": "7ea15384660ca507d6d8b535fb1903b85116ca1904bb4195bc03f94f9eaa704a",
-      "size": 18223
+      "sha256": "ee960d434ec00782a664ed4c02f408a3e192917c4ee452271fcaf9cb9d0788f9",
+      "size": 19153
     },
     "scripts/portable/install_bundle.py": {
       "sha256": "8be2b48fd7646c6f4570ff89ca78e48f473441464641af6ee6675eed7df4bd90",
@@ -128,7 +128,7 @@
       "size": 18043
     },
     "SKILL.md": {
-      "sha256": "7a5991f0c1edb3cb67bcc4b268f78bad82968922e78129c49095e1e4368e51b1",
+      "sha256": "a788583293a81be6b0b13ea8afdedb61b5a2a213d1a8e6e0da3c1995da39d1a1",
       "size": 9309
     },
     "update-source.json": {

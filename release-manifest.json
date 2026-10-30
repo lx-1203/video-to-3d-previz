@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
   "skill_name": "video-to-3d-previz",
-  "version": "1.3.8",
+  "version": "1.3.9",
   "files": {
     "agents/openai.yaml": {
       "sha256": "b299a61329819d2148a16e51c3b5279111dc4592790d6626cde3908ab1e27977",
       "size": 389
     },
     "references/character-and-motion.md": {
-      "sha256": "a98ad89306a36b606a457b7f5a08e03f092c46c744e334b3a32fda614e3d841a",
-      "size": 22441
+      "sha256": "c96a21f35a424a34bf4d880885cbe5ce2256769eb33d341aa09d0ce143ed84b8",
+      "size": 25263
     },
     "references/delivery-and-audio.md": {
       "sha256": "96908e072f366f0cb312bc8256f7456894aa40a64c1af72cb7b2b9a5c1a545b1",
@@ -24,8 +24,8 @@
       "size": 14863
     },
     "references/quality-gates.md": {
-      "sha256": "ae1f8085fe0fc90c4f4b3b42dcf81e3916b7e8465ffe7029425c6a3526269b27",
-      "size": 13849
+      "sha256": "be8eed190658090fcbb55750f76a25bbd3a0de76d6cdc10cebc6201f20279090",
+      "size": 14511
     },
     "references/reference-and-camera.md": {
       "sha256": "d4c3e8153e1c5c699a2b0ba74b854bfcb4d00eb22c85de32df45a8e31508acb7",
@@ -56,7 +56,7 @@
       "size": 4480
     },
     "SKILL.md": {
-      "sha256": "d78037a64910749622749c3df8851ab0407af51a05b428bf1ae8e3d5c402ca42",
+      "sha256": "1ca49ab9d57c5c38d571d3263f088bde24248aba747d12cd25fb9774cf5498b1",
       "size": 7632
     },
     "update-source.json": {

@@ -2,7 +2,7 @@
 name: video-to-3d-previz
 description: 调用前必须执行scripts/check_update.py并通过联网更新门禁。Use when 用户要求视频转3D白模、视频转白膜、Blender 白模预演、按实拍复刻镜头和动作、带原声的上下对比视频，或修订与验收此类工程的场景配色、空间、造型、手部、遮挡、人物接触及交付版本。适用于参考视频到可编辑三维预演，不用于仅剪辑视频或单张图片生成模型。
 metadata:
-  version: "1.3.8"
+  version: "1.3.9"
 ---
 
 # 视频转3D白模

@@ -156,19 +156,29 @@ def job_lock(directory, stage):
 
 
 @contextmanager
-def operation(directory, job, stage):
+def operation(directory, job, stage, *, preserve_failed_snapshot=False):
     with job_lock(directory, stage):
         expected = getattr(job, '_snapshot_sha256', None)
         if expected is not None and digest(directory / 'job.json') != expected:
             # Reject before entering the failure/save handlers: stale state must
             # never replace a newer success, even with a recorded failure.
             raise WorkbenchError('STALE_JOB', 'Job changed since it was read; reload status and retry against the current artifacts.')
+        previous = json.loads(json.dumps(job)) if preserve_failed_snapshot else None
+        save_job = True
         try:
             if any(not intact(a) for a in job['inputs'].values()):
                 raise WorkbenchError('STALE_INPUTS', 'An input changed; initialize a new job from the intended sources.')
             yield
             job['failure'] = None
         except Exception as exc:
+            if preserve_failed_snapshot:
+                # Export-only continuation needs the original failed snapshot
+                # to remain auditable and retryable after a transient failure.
+                # The failed recovery attempt retains its command/log files.
+                save_job = False
+                job.clear()
+                job.update(previous)
+                raise
             if stage in ('extract', 'attach-motion'):
                 invalidate(job, ('motion', 'motion_metadata', 'candidate', 'preview', 'verification', 'bridge_report'))
                 job['motion_provenance'] = None
@@ -179,11 +189,19 @@ def operation(directory, job, stage):
             job['failure'] = {'stage': stage, 'code': getattr(exc, 'code', 'OPERATION_FAILED'),
                               'message': str(exc), 'at': now()}
             raise
+        except BaseException:
+            if preserve_failed_snapshot:
+                # Catchable interrupts must not consume the audited snapshot.
+                save_job = False
+                job.clear()
+                job.update(previous)
+            raise
         finally:
-            job['updated_at'] = now()
-            write_json(directory / 'job.json', job)
-            if expected is not None:
-                job._snapshot_sha256 = digest(directory / 'job.json')
+            if save_job:
+                job['updated_at'] = now()
+                write_json(directory / 'job.json', job)
+                if expected is not None:
+                    job._snapshot_sha256 = digest(directory / 'job.json')
 
 
 def inspect_bvh(path):
@@ -340,7 +358,38 @@ def verify_motion_duration(info, job):
         raise WorkbenchError('MOTION_DURATION_MISMATCH', 'BVH duration does not match selected interval; explicitly prepare the intended clip.')
 
 
-def extract(directory, job):
+def register_extracted_motion(job, motion, pt, raw_pt, backend, recovery=None):
+    """One registration path for normal extract and verified export-only resume."""
+    info = inspect_bvh(motion)
+    verify_motion_duration(info, job)
+    motion_artifact = artifact(motion)
+    sidecar = motion.with_suffix(motion.suffix + '.json')
+    meta = read_json(sidecar)
+    parameters_artifact = artifact(pt)
+    if (meta.get('bvh_sha256') != motion_artifact['sha256']
+            or meta.get('input_sha256') != parameters_artifact['sha256']
+            or meta.get('postprocessed') is not True
+            or meta.get('frames') != info['frames']
+            or not math.isclose(meta.get('fps', 0), info['fps'], abs_tol=1e-6)):
+        raise WorkbenchError('MOTION_METADATA_MISMATCH', 'Exporter metadata differs from the current BVH/processed checkpoint.')
+    job['outputs'].update(motion=motion_artifact, motion_metadata=artifact(sidecar))
+    job['motion_provenance'] = {**motion_artifact, 'route':'gem_video_inference', 'completed_at':now()}
+    job['motion_info'] = info
+    entry = {'stage':'extract', 'at':now(), 'route':'gem_video_inference',
+             'backend_revision':backend['revision'], 'source_sha256':job['inputs']['video']['sha256'],
+             'parameters':parameters_artifact, 'raw_parameters':artifact(raw_pt),
+             'postprocess_device':'cpu', 'motion_sha256':motion_artifact['sha256']}
+    if recovery:
+        entry['export_recovery'] = recovery
+    job['history'].append(entry)
+
+
+def extract(directory, job, *, resume_checkpoint=None, receipt_sha256=None):
+    if resume_checkpoint is not None or receipt_sha256 is not None:
+        if not resume_checkpoint or not receipt_sha256:
+            raise WorkbenchError('RESUME_ARGUMENTS_REQUIRED', 'Provide both a checkpoint receipt path and its SHA; no inference was started.')
+        from export_resume import resume_export
+        return resume_export(sys.modules[__name__], directory, job, resume_checkpoint, receipt_sha256)
     with operation(directory, job, 'extract'):
         invalidate(job, ('motion', 'motion_metadata', 'candidate', 'preview', 'verification', 'bridge_report'))
         c = read_config(job['inputs']['config']['path'])
@@ -375,21 +424,7 @@ def extract(directory, job):
         run_logged([b['python'], HERE / 'export_gem_bvh.py', '--input', pt, '--assets',
                     b['soma_assets'], '--output', motion, '--fps', '30'],
                    dest / 'export.log', cwd=b['root'], env=env)
-        info = inspect_bvh(motion)
-        verify_motion_duration(info, job)
-        motion_artifact = artifact(motion)
-        sidecar = motion.with_suffix(motion.suffix + '.json')
-        if read_json(sidecar).get('bvh_sha256') != motion_artifact['sha256']:
-            raise WorkbenchError('MOTION_METADATA_MISMATCH', 'Exporter coordinate metadata differs from BVH.')
-        metadata_artifact = artifact(sidecar)
-        parameters_artifact = artifact(pt)
-        job['outputs'].update(motion=motion_artifact, motion_metadata=metadata_artifact)
-        job['motion_provenance'] = {**motion_artifact, 'route':'gem_video_inference', 'completed_at':now()}
-        job['motion_info'] = info
-        job['history'].append({'stage': 'extract', 'at': now(), 'route': 'gem_video_inference',
-                               'backend_revision': b['revision'], 'source_sha256': job['inputs']['video']['sha256'],
-                               'parameters': parameters_artifact, 'raw_parameters':artifact(raw_pt),
-                               'postprocess_device':'cpu', 'motion_sha256': job['outputs']['motion']['sha256']})
+        register_extracted_motion(job, motion, pt, raw_pt, b)
     return result(job, directory)
 
 
@@ -620,9 +655,16 @@ def main(argv=None):
     init_p.add_argument('--start', type=float, default=0)
     init_p.add_argument('--duration', type=float, default=5, help='Duration in seconds, 0 < value <= 60; decimals accepted.')
     init_p.add_argument('--motion', help='Explicit external BVH route; next_action imports this file instead of running video inference.')
+    checkpoint_p = subs.add_parser('audit-export-checkpoint')
+    for key in ('job', 'attempt', 'raw-sha256', 'processed-sha256', 'out'):
+        checkpoint_p.add_argument('--' + key, required=True)
+    checkpoint_p.add_argument('--original-exporter', required=True)
     for command in ('status', 'extract', 'attach-motion', 'retarget', 'preview', 'review'):
         sp = subs.add_parser(command)
         sp.add_argument('--job', required=True)
+        if command == 'extract':
+            sp.add_argument('--resume-checkpoint')
+            sp.add_argument('--receipt-sha256')
         if command == 'attach-motion':
             sp.add_argument('--motion', required=True)
         if command == 'review':
@@ -635,6 +677,20 @@ def main(argv=None):
             out = doctor(args.config)
         elif args.command == 'init':
             out = init_job(args)
+        elif args.command == 'audit-export-checkpoint':
+            receipt_path = Path(args.out)
+            if receipt_path.exists():
+                raise WorkbenchError('CHECKPOINT_RECEIPT_EXISTS', 'Choose a new receipt path; existing files are preserved.')
+            from export_resume import audit_checkpoint
+            directory, job = load_job(args.job)
+            receipt = audit_checkpoint(sys.modules[__name__], directory, args.attempt,
+                                      args.raw_sha256, args.processed_sha256,
+                                      original_exporter=Path(args.original_exporter))
+            receipt_path.parent.mkdir(parents=True, exist_ok=True)
+            with receipt_path.open('x', encoding='utf-8', newline='\n') as output:
+                output.write(json.dumps(receipt, ensure_ascii=False, indent=2) + '\n')
+            out = {'ok':True, 'code':'CHECKPOINT_AUDITED', 'receipt':artifact(receipt_path),
+                   'scope':'Retrospective checkpoint audit only; no job outputs registered.'}
         else:
             directory, job = load_job(args.job)
             if args.command == 'status':
@@ -642,7 +698,8 @@ def main(argv=None):
                 if (directory / '.operation.lock').exists():
                     out['active_operation'] = read_json(directory / '.operation.lock')
             elif args.command == 'extract':
-                out = extract(directory, job)
+                out = extract(directory, job, resume_checkpoint=args.resume_checkpoint,
+                              receipt_sha256=args.receipt_sha256)
             elif args.command == 'attach-motion':
                 out = attach_motion(directory, job, args.motion)
             elif args.command == 'retarget':

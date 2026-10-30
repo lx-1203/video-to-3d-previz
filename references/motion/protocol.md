@@ -151,6 +151,21 @@ python "<skill>/scripts/motion/motion_workbench.py" review --job "<job>" --verdi
 
 ## 失败与对用户报告
 
+### 仅恢复已完成缓存的导出阶段
+
+此入口只处理旧任务中已确认的 `GLOBAL bytes` 导出失败：原始推理与官方 CPU 后处理均已保存，本轮未登记 BVH/provenance，原输入、时间范围、后端、命令、日志和两份 PT 均可核对。其他失败先处理实际原因，不自动进入本路线。以下两步使用配置中已装 PyTorch/NumPy 的 **backend Python**，不是未安装这些依赖的普通前端 Python；不启动 GPU 推理。
+
+先对原失败任务做回溯审核，显式提供精确 attempt 名、当前选择的 raw/processed SHA，以及失败命令里的 exporter 路径，输出必须为新文件：
+
+```text
+<backend-python> <skill>/scripts/motion/motion_workbench.py audit-export-checkpoint --job <failed-job> --attempt extract-<12hex> --raw-sha256 <raw-PT-SHA> --processed-sha256 <processed-PT-SHA> --original-exporter <exporter-path-in-old-command> --out <new-receipt.json>
+<backend-python> <skill>/scripts/motion/motion_workbench.py extract --job <selected-job> --resume-checkpoint <new-receipt.json> --receipt-sha256 <receipt-SHA>
+```
+
+审核不覆盖既有文件、不修改任务成功状态。恢复在操作锁内重验当前输入、原失败任务、缓存、源元数据/时序、后端源码/配置/资产、三阶段命令/保存日志与 raw→processed 关联，只对新 attempt 运行 CPU exporter；二次核验后走与正常提取相同的登记函数，校验 BVH/sidecar/输入 SHA、帧数和 fps。原 attempt 已有 BVH/sidecar 残留时拒绝采用。普通异常及可捕获 KeyboardInterrupt/SystemExit 恢复原失败快照并释放锁，partial 输出不登记，原 receipt 可在输入未变时重试；不保证 hard kill 后自动恢复。
+
+旧控制器没有在生产时保存 PT 哈希或阶段成功退出回执，所以这是**当前字节、明确选择与现有日志的回溯审核**，不能补造历史时点证明。后台源码、输入、PT、原任务或旧 exporter 路径字节变化后重新审核，不复用旧 receipt。技术恢复不证明目标人物正确、动作精度、模板接入、场景接触或交稿通过；恢复后仍按普通流程和骨架视频硬门槛复核。
+
 报告当前已验证阶段、阻塞及下一步，并给真实文件路径。没有动作、没有甲方工程、没有视觉核验是不同阶段，不能合并为“已完成”。
 
 | 当前事实 | 可报告的结论 | 后续处理 |

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "skill_name": "video-to-3d-previz",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "files": {
     "agents/openai.yaml": {
       "sha256": "b299a61329819d2148a16e51c3b5279111dc4592790d6626cde3908ab1e27977",
@@ -36,12 +36,12 @@
       "size": 3127
     },
     "references/motion/protocol.md": {
-      "sha256": "8bf093b0e50fc9e388610f4cfc86164599b883eec8f0306682b5798cad3573b4",
-      "size": 16345
+      "sha256": "bdc364e8598b1dd6cf1812ac3875292f134bcffd30a4a8f15a516fb141a2c42e",
+      "size": 18556
     },
     "references/motion-workflow.md": {
-      "sha256": "e8786acd6e811545fa478187f3cd21b1f283552c2d41221219224a535e621c63",
-      "size": 4273
+      "sha256": "edc67377a3764072251e5a9f1d01417e8a8a93a44884c2b7bb06220cc76303a6",
+      "size": 4540
     },
     "references/order-toolkit.md": {
       "sha256": "ce82ca0d53d106387593a06fa4cb62557f0be08175262d3e2747c3b07a4ee3eb",
@@ -88,8 +88,12 @@
       "size": 15103
     },
     "scripts/motion/export_gem_bvh.py": {
-      "sha256": "b570ed705501f2e688e80688e6b028e4f85f1cf8f1e1fdd89a80a4a945d63dd0",
-      "size": 12420
+      "sha256": "f90c85a03908485aa2073b1b8e411a315254004a8fd0d909d7c15b85b1456a10",
+      "size": 12637
+    },
+    "scripts/motion/export_resume.py": {
+      "sha256": "7adfb3fb3239f3447b3e1534631f12de0b71f8e3dd2c6e1393165642dc43bab2",
+      "size": 14968
     },
     "scripts/motion/mediapipe_motion.py": {
       "sha256": "55baa6ceb333e0c238c9a358297c354c38dd688b7db2f3605c2c30b7fce28158",
@@ -100,8 +104,8 @@
       "size": 23121
     },
     "scripts/motion/motion_workbench.py": {
-      "sha256": "fa59987da370b713be47b2324eda4ef45a750f08812caef4faf06d6f098f28be",
-      "size": 37628
+      "sha256": "456bc02d49ba3758f642a8bf85d64c98f4494bda49c4e1bd81be88090c450f6b",
+      "size": 40936
     },
     "scripts/motion/setup_backend.py": {
       "sha256": "9cec97d4137bbb28beb4c49ad49abcfefa5bca740498faa291f4e34f196cc0a8",
@@ -124,7 +128,7 @@
       "size": 18043
     },
     "SKILL.md": {
-      "sha256": "4d068739e9d9f58b50cd9994d7465b5358a5a88df279f3a5f62a4dac1870a4d1",
+      "sha256": "7a5991f0c1edb3cb67bcc4b268f78bad82968922e78129c49095e1e4368e51b1",
       "size": 9309
     },
     "update-source.json": {

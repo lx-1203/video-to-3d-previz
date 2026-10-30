@@ -164,7 +164,10 @@ class WorkbenchTests(unittest.TestCase):
             out = Path(argv[argv.index('--output')+1])
             if out.suffix == '.bvh':
                 out.write_text(template)
-                out.with_suffix('.bvh.json').write_text(json.dumps({'bvh_sha256':self.m.digest(out)}))
+                metadata = self.m.inspect_bvh(out)
+                metadata.update(bvh_sha256=self.m.digest(out),
+                    input_sha256=self.m.digest(Path(argv[argv.index('--input')+1])), postprocessed=True)
+                out.with_suffix('.bvh.json').write_text(json.dumps(metadata))
             else:
                 out.write_bytes(b'test-only result, not real inference')
         with patch.object(self.m,'run_logged',side_effect=fake_external), patch.object(

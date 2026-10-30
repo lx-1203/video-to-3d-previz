@@ -10,6 +10,7 @@ from test_update import Source, gate, release
 
 ROOT = Path(__file__).resolve().parents[1]
 TOOLS = ('motion_workbench.py', 'blender_bridge.py', 'export_gem_bvh.py',
+         'export_resume.py',
          'download_backend_assets.py', 'setup_backend.py', 'mediapipe_motion.py',
          'motion_preview.py')
 

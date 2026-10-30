@@ -140,6 +140,21 @@ def write_motion_bvh(path, names, parents, world_transforms, rest_transforms, fp
     }
 
 
+def load_prediction_checkpoint(input_path):
+    """Restricted CPU load preserving pre-existing safe-global registrations."""
+    import numpy as np
+    import torch
+    numpy_core = np._core if hasattr(np, "_core") else np.core
+    numeric_globals = [bytes, numpy_core.multiarray._reconstruct, np.ndarray, np.dtype]
+    numeric_globals.extend(type(np.dtype(kind)) for kind in (np.float32, np.int32, np.int64, np.bool_))
+    # safe_globals removes its own additions on exit. Do not remove symbols
+    # which a caller had already registered before this scoped load.
+    existing = torch.serialization.get_safe_globals()
+    additions = [symbol for symbol in numeric_globals if symbol not in existing]
+    with torch.serialization.safe_globals(additions):
+        return torch.load(input_path, map_location="cpu", weights_only=True)
+
+
 def export(input_path, assets, output_path, fps):
     import numpy as np
     import soma
@@ -153,15 +168,7 @@ def export(input_path, assets, output_path, fps):
     # Real video caches also contain numeric NumPy tracking metadata. Permit
     # only the reconstruction symbols and dtypes emitted by this GEM release;
     # keep weights_only and reject object arrays or arbitrary pickle globals.
-    numpy_core = np._core if hasattr(np, "_core") else np.core
-    numeric_globals = [bytes, numpy_core.multiarray._reconstruct, np.ndarray, np.dtype]
-    numeric_globals.extend(type(np.dtype(kind)) for kind in (np.float32, np.int32, np.int64, np.bool_))
-    # safe_globals removes its own additions on exit. Do not remove symbols
-    # which a caller had already registered before this scoped load.
-    existing = torch.serialization.get_safe_globals()
-    additions = [symbol for symbol in numeric_globals if symbol not in existing]
-    with torch.serialization.safe_globals(additions):
-        result = torch.load(input_path, map_location="cpu", weights_only=True)
+    result = load_prediction_checkpoint(input_path)
     if not isinstance(result, dict) or "pred_soma_params_global" not in result:
         raise ValueError("Expected current GEM-X Motion output with pred_soma_params_global")
     actual_fps = prediction_fps(result)

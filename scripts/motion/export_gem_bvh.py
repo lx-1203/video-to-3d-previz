@@ -157,13 +157,7 @@ def load_prediction_checkpoint(input_path):
 
 def export(input_path, assets, output_path, fps):
     import numpy as np
-    import soma
     import torch
-    from gem.common.soma import SomaFixedGs1BodyAdapter, SomaRuntimeConfig
-    from gem.inference.timing import prediction_fps
-
-    if soma.__version__ != "0.3.3":
-        raise ValueError(f"Expected py-soma-x==0.3.3, got {soma.__version__}")
     input_path, output_path = Path(input_path).resolve(), Path(output_path).resolve()
     # Real video caches also contain numeric NumPy tracking metadata. Permit
     # only the reconstruction symbols and dtypes emitted by this GEM release;
@@ -171,6 +165,12 @@ def export(input_path, assets, output_path, fps):
     result = load_prediction_checkpoint(input_path)
     if not isinstance(result, dict) or "pred_soma_params_global" not in result:
         raise ValueError("Expected current GEM-X Motion output with pred_soma_params_global")
+    import soma
+    from gem.common.soma import SomaFixedGs1BodyAdapter, SomaRuntimeConfig
+    from gem.inference.timing import prediction_fps
+
+    if soma.__version__ != "0.3.3":
+        raise ValueError(f"Expected py-soma-x==0.3.3, got {soma.__version__}")
     actual_fps = prediction_fps(result)
     if not math.isclose(float(actual_fps), fps, abs_tol=1e-4, rel_tol=0):
         raise ValueError(f"Source is {actual_fps}Hz; --fps {fps} would retime rather than resample")

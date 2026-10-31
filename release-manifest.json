@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "skill_name": "video-to-3d-previz",
-  "version": "1.4.3",
+  "version": "1.5.0",
   "files": {
     "agents/openai.yaml": {
       "sha256": "b299a61329819d2148a16e51c3b5279111dc4592790d6626cde3908ab1e27977",
@@ -40,8 +40,12 @@
       "size": 18556
     },
     "references/motion-workflow.md": {
-      "sha256": "edc67377a3764072251e5a9f1d01417e8a8a93a44884c2b7bb06220cc76303a6",
-      "size": 4540
+      "sha256": "d9217e1543971d54301d9c6a583eafd7cef3f995e18d4c1c9000cca8cf221429",
+      "size": 4869
+    },
+    "references/multi-actor.md": {
+      "sha256": "b86c72caaddb3975ed6590e2aa8e72a5cb2050ed61edb0985f5fa4b3ad65263f",
+      "size": 10024
     },
     "references/order-toolkit.md": {
       "sha256": "1c76d6d7565bd9ca010a7afe54436d5141fc1c6e037ece4af1cd8949d5bdc1e3",
@@ -79,16 +83,24 @@
       "sha256": "ce95af7041cb7d9c9ceb003e9e8217d672a41b7c8eb900cf63b96a9859b40c62",
       "size": 14671
     },
+    "scripts/motion/actor_identity_proposal.py": {
+      "sha256": "eb1d3f0d8e02a336bbd2ae44671500579c7249ef388d1ca812b6936ca14ae695",
+      "size": 11653
+    },
     "scripts/motion/blender_bridge.py": {
       "sha256": "8fe8c32e43ad22f338397db62222beff7ce8c9eef8f4f0433839f3e111ad7d40",
       "size": 31431
+    },
+    "scripts/motion/blender_pose_prior.py": {
+      "sha256": "3ab37155c178edbb2ebea1d4a481f6eb01a51c8101752fe0fecfbdaac3f12823",
+      "size": 23850
     },
     "scripts/motion/download_backend_assets.py": {
       "sha256": "7d5620c2204ba00a17dbed21f38bd2417d8735cac6e480ba3fec5bcce4b9b57a",
       "size": 15103
     },
     "scripts/motion/export_gem_bvh.py": {
-      "sha256": "f90c85a03908485aa2073b1b8e411a315254004a8fd0d909d7c15b85b1456a10",
+      "sha256": "4b7eb69451ae3deacb09df0f8048b295d2ecca2f84a497f63ab019d2d7d1091a",
       "size": 12637
     },
     "scripts/motion/export_resume.py": {
@@ -106,6 +118,22 @@
     "scripts/motion/motion_workbench.py": {
       "sha256": "456bc02d49ba3758f642a8bf85d64c98f4494bda49c4e1bd81be88090c450f6b",
       "size": 40936
+    },
+    "scripts/motion/multi_actor.py": {
+      "sha256": "66f35316aca4a5dcfa5c5befefb9eeec42d4e1d98bbcd59a84477b0b4ee101df",
+      "size": 12119
+    },
+    "scripts/motion/multi_actor_detect.py": {
+      "sha256": "e38b1fb543dbd29c70ac74faa5400b50d0955d180ba3dd85fb524041759324e7",
+      "size": 17138
+    },
+    "scripts/motion/multi_actor_pose.py": {
+      "sha256": "765589d893a695611679afc7ddc11c9bb89956b5a0168e13b1b1af042e58ade0",
+      "size": 23394
+    },
+    "scripts/motion/pose_semantic_profile.py": {
+      "sha256": "b3d964008c197609d91b7d46731b7ebe8cc6a66ccc3a4046fb7ebda7d9d3dd68",
+      "size": 9358
     },
     "scripts/motion/setup_backend.py": {
       "sha256": "9cec97d4137bbb28beb4c49ad49abcfefa5bca740498faa291f4e34f196cc0a8",
@@ -128,8 +156,8 @@
       "size": 18043
     },
     "SKILL.md": {
-      "sha256": "a788583293a81be6b0b13ea8afdedb61b5a2a213d1a8e6e0da3c1995da39d1a1",
-      "size": 9309
+      "sha256": "86de8ad9cf6554077314755adb260f607ad20e42e3f462f12ecaaf27507279f8",
+      "size": 9512
     },
     "update-source.json": {
       "sha256": "43b393339c5dccd4eb7e05175236c2fef0691d91158b5b1d6e26594ff3f9b961",

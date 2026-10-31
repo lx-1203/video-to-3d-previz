@@ -2,7 +2,7 @@
 name: video-to-3d-previz
 description: 调用前必须执行scripts/check_update.py并通过联网更新门禁。Use when 用户要求视频转3D白模、视频转白膜、Blender 白模预演、按实拍复刻镜头和动作、带原声的上下对比视频，或修订与验收此类工程的场景配色、空间、造型、手部、遮挡、人物接触及交付版本。适用于参考视频到可编辑三维预演，不用于仅剪辑视频或单张图片生成模型。
 metadata:
-  version: "1.4.3"
+  version: "1.5.0"
 ---
 
 # 视频转3D白模
@@ -26,6 +26,7 @@ metadata:
 | 当前工作 | 读取 |
 |---|---|
 | 视频提取动作、导入BVH、接入指定绑定或生成整段动作原声对照 | [动作识别与指定模型接入](references/motion-workflow.md) |
+| 多人检测、少量身份锚提案、逐角色Pose调用或模板臂方向短样例 | [多人候选与受限模板接入](references/multi-actor.md)；不等于多人时序、接触或整片通过 |
 | 制作可复制到其他 Windows＋NVIDIA 电脑的内部工具包、随包带私有模板或 Blender 导出插件 | [接单工具与便携安装](references/order-toolkit.md) |
 | 拆镜、场景还色、背景、楼层关系、相机或人物构图不对 | [参考分析与机位](references/reference-and-camera.md) |
 | 手绘身体盒子/肩线、球面眼条、无颈造型、浮头、手型、行走、取物、人物接触或穿插 | [造型与动作](references/character-and-motion.md) |

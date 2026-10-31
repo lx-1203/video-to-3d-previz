@@ -10,6 +10,8 @@
 
 需要复制到其他 Windows＋NVIDIA 电脑时，使用[接单工具与便携安装](references/order-toolkit.md)的构建器与安装器。私有模板和真实插件 ZIP 在本机加入私有包；公共仓库仅发布工具。安装器重建本机路径，不携带旧环境、权重、任务或客户影片。
 
+1.5.0增加[多人候选接口](references/multi-actor.md)：保留全检测与轨迹、少量身份锚/假设展开、官方多实例Pose受控调用与缓存绑定，以及显式profile的模板臂方向采样桥。它们是受限制作工具；不承诺自动识别人名、恢复多人共同世界深度、连续动作或正确接触。真实短例验证与每片正式骨架/交付审核分开。
+
 安装到Codex技能目录的`video-to-3d-previz`文件夹。复制`release-manifest.json`以及其中列出的运行文件，勿把整个Git仓库（含.git、README和tests）当成安装目录。然后在本机生效的AGENTS.md写入[调用前更新规则](references/updates.md)。
 
 每次调用前运行：

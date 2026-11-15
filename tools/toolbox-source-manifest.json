@@ -1,0 +1,153 @@
+{
+  "schema_version": 1,
+  "purpose": "Video to editable Blender white-model previs toolbox",
+  "workflow_repository": "https://github.com/lx-1203/video-to-3d-previz",
+  "components": [
+    {
+      "path": "tools/blender-order-tools/README.md",
+      "component_commit": "ac4e1db30251ad0aad6f4de363a411229c7db2ec",
+      "source_sha256": "c7c5f834bcadd94edf33f07e680eb70efa443fde64241786ec878e41819ead13",
+      "sha256": "c7c5f834bcadd94edf33f07e680eb70efa443fde64241786ec878e41819ead13",
+      "adaptation": null
+    },
+    {
+      "path": "tools/blender-order-tools/build_addon.py",
+      "component_commit": "ac4e1db30251ad0aad6f4de363a411229c7db2ec",
+      "source_sha256": "28f8e9b2a78f3a6078f61c87721c0b9ccb766ff8b66e8fb035cee0280be17b25",
+      "sha256": "28f8e9b2a78f3a6078f61c87721c0b9ccb766ff8b66e8fb035cee0280be17b25",
+      "adaptation": null
+    },
+    {
+      "path": "tools/blender-order-tools/docs/API.md",
+      "component_commit": "ac4e1db30251ad0aad6f4de363a411229c7db2ec",
+      "source_sha256": "0a81b10bc7363576098775c010e0f2ad08c2d7d859660dd29b1d178f4feb7bc6",
+      "sha256": "0a81b10bc7363576098775c010e0f2ad08c2d7d859660dd29b1d178f4feb7bc6",
+      "adaptation": null
+    },
+    {
+      "path": "tools/blender-order-tools/examples/palette.json",
+      "component_commit": "ac4e1db30251ad0aad6f4de363a411229c7db2ec",
+      "source_sha256": "c77148b75fc410606c98ef5039e7102ebba7381fc7f2647aaea3da7ff1127871",
+      "sha256": "c77148b75fc410606c98ef5039e7102ebba7381fc7f2647aaea3da7ff1127871",
+      "adaptation": null
+    },
+    {
+      "path": "tools/blender-order-tools/orderflow/__init__.py",
+      "component_commit": "ac4e1db30251ad0aad6f4de363a411229c7db2ec",
+      "source_sha256": "8a8dfa0295b2c68709c992e76ca32e8f7784281bc4642f7deca7b38deb878b82",
+      "sha256": "8a8dfa0295b2c68709c992e76ca32e8f7784281bc4642f7deca7b38deb878b82",
+      "adaptation": null
+    },
+    {
+      "path": "tools/blender-order-tools/orderflow/acceptance.py",
+      "component_commit": "ac4e1db30251ad0aad6f4de363a411229c7db2ec",
+      "source_sha256": "555c959d14b96aba934f6582534bd097c1d20c4dd2a96f695b0e6cb5281eeecd",
+      "sha256": "555c959d14b96aba934f6582534bd097c1d20c4dd2a96f695b0e6cb5281eeecd",
+      "adaptation": null
+    },
+    {
+      "path": "tools/blender-order-tools/orderflow/core.py",
+      "component_commit": "ac4e1db30251ad0aad6f4de363a411229c7db2ec",
+      "source_sha256": "14d428b0bffd9530c280e3527f72863ae11964e8189d3e3bfeab308f322a70e8",
+      "sha256": "14d428b0bffd9530c280e3527f72863ae11964e8189d3e3bfeab308f322a70e8",
+      "adaptation": null
+    },
+    {
+      "path": "tools/blender-order-tools/orderflow/media.py",
+      "component_commit": "ac4e1db30251ad0aad6f4de363a411229c7db2ec",
+      "source_sha256": "c8e32cba4c45aec5673c2b3343d9d1eafaf2641eac059e82108cf071f052a7d5",
+      "sha256": "c8e32cba4c45aec5673c2b3343d9d1eafaf2641eac059e82108cf071f052a7d5",
+      "adaptation": null
+    },
+    {
+      "path": "tools/blender-order-tools/orderflow/motion.py",
+      "component_commit": "ac4e1db30251ad0aad6f4de363a411229c7db2ec",
+      "source_sha256": "3d50fc21cfdd60e65b425e020137b3a85a99c57b8ca045c4d20e4526371dc48f",
+      "sha256": "3d50fc21cfdd60e65b425e020137b3a85a99c57b8ca045c4d20e4526371dc48f",
+      "adaptation": null
+    },
+    {
+      "path": "tools/blender-order-tools/orderflow/palette.py",
+      "component_commit": "ac4e1db30251ad0aad6f4de363a411229c7db2ec",
+      "source_sha256": "93e7f1842bd41fdbb1142f3e7d1ba43c1e815312a6899e2d0ec761c1bf316bca",
+      "sha256": "93e7f1842bd41fdbb1142f3e7d1ba43c1e815312a6899e2d0ec761c1bf316bca",
+      "adaptation": null
+    },
+    {
+      "path": "tools/blender-order-tools/orderflow/ui.py",
+      "component_commit": "ac4e1db30251ad0aad6f4de363a411229c7db2ec",
+      "source_sha256": "599e644ab4a134368548ded50a1e9638b940bc1f9c508b2cd562327c5fec228a",
+      "sha256": "599e644ab4a134368548ded50a1e9638b940bc1f9c508b2cd562327c5fec228a",
+      "adaptation": null
+    },
+    {
+      "path": "tools/blender-order-tools/orderflow/worker.py",
+      "component_commit": "ac4e1db30251ad0aad6f4de363a411229c7db2ec",
+      "source_sha256": "f97371563007798f11dcb5fb4be8cf52b6750a13aa501a11b5e741d1b1227d4c",
+      "sha256": "f97371563007798f11dcb5fb4be8cf52b6750a13aa501a11b5e741d1b1227d4c",
+      "adaptation": null
+    },
+    {
+      "path": "tools/blender-order-tools/tests/test_acceptance.py",
+      "component_commit": "ac4e1db30251ad0aad6f4de363a411229c7db2ec",
+      "source_sha256": "bcf51d21bd170392c0a2cf214723b018e0400ab8771ea9edf132a598dbb14b88",
+      "sha256": "bcf51d21bd170392c0a2cf214723b018e0400ab8771ea9edf132a598dbb14b88",
+      "adaptation": null
+    },
+    {
+      "path": "tools/blender-order-tools/tests/test_core.py",
+      "component_commit": "ac4e1db30251ad0aad6f4de363a411229c7db2ec",
+      "source_sha256": "8efd293ead6f3ebede16f45b77132d05ac5930b837dbf0a8aff0fd5286437892",
+      "sha256": "8efd293ead6f3ebede16f45b77132d05ac5930b837dbf0a8aff0fd5286437892",
+      "adaptation": null
+    },
+    {
+      "path": "tools/blender-order-tools/tests/test_media.py",
+      "component_commit": "ac4e1db30251ad0aad6f4de363a411229c7db2ec",
+      "source_sha256": "5e87463bb564b5b8fa9bc1751b31a81592c03216e73d6acd92ebe65eb0336978",
+      "sha256": "5e87463bb564b5b8fa9bc1751b31a81592c03216e73d6acd92ebe65eb0336978",
+      "adaptation": null
+    },
+    {
+      "path": "tools/blender-order-tools/tests/test_motion.py",
+      "component_commit": "ac4e1db30251ad0aad6f4de363a411229c7db2ec",
+      "source_sha256": "92a8d2c86fced0fcfdca98dcf1ddbbb2d6c5fe8dadc012f09e94c34f2238ab2c",
+      "sha256": "92a8d2c86fced0fcfdca98dcf1ddbbb2d6c5fe8dadc012f09e94c34f2238ab2c",
+      "adaptation": null
+    },
+    {
+      "path": "tools/blender-order-tools/tests/test_palette.py",
+      "component_commit": "ac4e1db30251ad0aad6f4de363a411229c7db2ec",
+      "source_sha256": "836e498320a5249a9d85ddf4f90d1d5760068ce86c989a0347ce24612f2a72e9",
+      "sha256": "836e498320a5249a9d85ddf4f90d1d5760068ce86c989a0347ce24612f2a72e9",
+      "adaptation": null
+    },
+    {
+      "path": "tools/blender-order-tools/tests/test_worker.py",
+      "component_commit": "ac4e1db30251ad0aad6f4de363a411229c7db2ec",
+      "source_sha256": "864a6b833450fd7f20971ce1208da503ce87c297c84730ed3e34c44fd2f0234d",
+      "sha256": "864a6b833450fd7f20971ce1208da503ce87c297c84730ed3e34c44fd2f0234d",
+      "adaptation": null
+    }
+  ],
+  "portable_installer": {
+    "build_path": "scripts/portable/build_bundle.py",
+    "install_path": "scripts/portable/install_bundle.py",
+    "source": "existing main repository; not duplicated"
+  },
+  "downloads": {
+    "orderflow-0.1.0.zip": {
+      "sha256": "5af6fcb661232b923ea8c6f6a4532025fe27dd13f6a567cbcaadd733175e358a",
+      "size": 38446,
+      "role": "asset-free Blender addon"
+    }
+  },
+  "not_included": [
+    "customer templates and profiles",
+    "Blender project scenes",
+    "reference or delivery media",
+    "model weights and virtual environments",
+    "unrelated butterfly web project",
+    "local credentials and coordinator records"
+  ]
+}

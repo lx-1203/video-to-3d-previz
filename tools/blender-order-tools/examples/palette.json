@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "actors": {
+    "actor_a": {
+      "body_color": [0.2, 0.4, 0.6, 1.0],
+      "marker_color": "complement",
+      "objects": [
+        {"name": "ActorMesh", "body_slots": [0], "marker_slots": [1]}
+      ]
+    }
+  }
+}

@@ -1,6 +1,6 @@
 {
  "schema": "camera_solve/v1",
- "produced_at": "2026-11-16 20:00",
+ "produced_at": "2026-11-18 22:54",
  "files": [
   "0.camera_solve.json",
   "1.camera_solve.json",
@@ -16,8 +16,8 @@
  "n_videos": 10,
  "n_shots": 54,
  "regime_counts": {
-  "ambiguous": 48,
-  "tele_far": 6
+  "ambiguous": 46,
+  "tele_far": 8
  },
  "pose_source": "unavailable",
  "gate": {

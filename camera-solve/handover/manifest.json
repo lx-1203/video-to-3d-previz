@@ -1,6 +1,6 @@
 {
  "schema": "camera_solve/v1",
- "produced_at": "2026-11-18 22:54",
+ "produced_at": "2026-11-18 23:35",
  "files": [
   "0.camera_solve.json",
   "1.camera_solve.json",
@@ -14,20 +14,21 @@
   "d9645e46aeba9077.camera_solve.json"
  ],
  "n_videos": 10,
- "n_shots": 54,
+ "n_shots": 71,
  "regime_counts": {
-  "ambiguous": 46,
-  "tele_far": 8
+  "ambiguous": 66,
+  "tele_far": 5
  },
  "pose_source": "unavailable",
  "gate": {
   "cut_check": true,
   "suspect_spread": 1.5,
   "zoom_spread": 1.3,
-  "n_split_required": 3,
+  "n_split_required": 7,
   "split_required_by_video": {
-   "b78e579cd5ee66e790826d29464752fbdd0f48f3e95d6e0737df0d98fbc9c0f3.mp4": 2,
-   "d9645e46aeba9077faf9d6c47599886412e4e8a58cb18d571028658344d97586.mp4": 1
+   "b78e579cd5ee66e790826d29464752fbdd0f48f3e95d6e0737df0d98fbc9c0f3.mp4": 3,
+   "cbb9c61cb0d1a23ff0ed6ab2348b455186909d57970a1654707fc61564630539.mp4": 1,
+   "d9645e46aeba9077faf9d6c47599886412e4e8a58cb18d571028658344d97586.mp4": 3
   },
   "rule": "段内检出硬切或段内 f 漂移 >1.5× 的镜头一律不给 f_px，并置 split_required=true。消费端遇到 split_required 必须先按真镜头重新拆分，不得直接使用该段的 regime。"
  },

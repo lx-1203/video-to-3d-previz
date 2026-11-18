@@ -1,0 +1,39 @@
+{
+ "schema": "camera_solve/v1",
+ "produced_at": "2026-11-16 20:00",
+ "files": [
+  "0.camera_solve.json",
+  "1.camera_solve.json",
+  "2.camera_solve.json",
+  "3.camera_solve.json",
+  "4.camera_solve.json",
+  "b78e579cd5ee66e7.camera_solve.json",
+  "cbb9c61cb0d1a23f.camera_solve.json",
+  "d1fe23d01a7f37f1.camera_solve.json",
+  "d75502e5a7b9aed6.camera_solve.json",
+  "d9645e46aeba9077.camera_solve.json"
+ ],
+ "n_videos": 10,
+ "n_shots": 54,
+ "regime_counts": {
+  "ambiguous": 48,
+  "tele_far": 6
+ },
+ "pose_source": "unavailable",
+ "gate": {
+  "cut_check": true,
+  "suspect_spread": 1.5,
+  "zoom_spread": 1.3,
+  "n_split_required": 3,
+  "split_required_by_video": {
+   "b78e579cd5ee66e790826d29464752fbdd0f48f3e95d6e0737df0d98fbc9c0f3.mp4": 2,
+   "d9645e46aeba9077faf9d6c47599886412e4e8a58cb18d571028658344d97586.mp4": 1
+  },
+  "rule": "段内检出硬切或段内 f 漂移 >1.5× 的镜头一律不给 f_px，并置 split_required=true。消费端遇到 split_required 必须先按真镜头重新拆分，不得直接使用该段的 regime。"
+ },
+ "segmentation": {
+  "720p": "shot_segments_fixed.json",
+  "4k": "shot_segments_4k_fixed.json"
+ },
+ "warning": "位姿未解（cam_loc/R 为 null），不可用于把白模对齐到画面。详见 docs/19。"
+}

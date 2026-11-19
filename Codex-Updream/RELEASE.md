@@ -1,4 +1,6 @@
-Codex-native Updream plugin 0.3.4 with automatic Windows installation.
+Codex-native Updream plugin 0.3.5 with automatic Windows installation.
+
+- Carries the canvas merge rules in the plugin. Reserve space before pasting, finish and verify the layout of each batch, and distinguish transfer from layout progress.
 
 - Separates native Codex browser diagnostics from the independent Edge/Chrome Bridge. Bridge status is never a native-browser connection test.
 - Reports a missing browser in the current chat without taking over another chat or automatically requesting extension pairing.

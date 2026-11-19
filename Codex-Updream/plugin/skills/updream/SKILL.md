@@ -1,6 +1,6 @@
 ---
 name: updream
-description: Connect to or operate Updream in the Codex built-in browser. Use for opening Updream, checking its canvas, placing authorized text/assets, and reading or modifying authorized nodes. Prefer this native Codex route when the user does not want an Edge/Chrome extension or desktop control.
+description: Use for opening Updream in the Codex built-in browser, checking a canvas, placing authorized text/assets, or arranging and merging canvases. Prefer this route when the user does not want an Edge/Chrome extension or desktop control.
 ---
 
 # Updream for Codex
@@ -27,6 +27,7 @@ Use the host's supported **built-in browser** tools. This plugin supplies a work
 
 ## Scope, writes and coordination
 
+- When importing, merging, or organizing nodes, follow [Canvas merge and layout](references/webmcp.md#canvas-merge-and-layout). Finish the layout and verify it after each batch.
 - Preserve the user's selected project, fragments and source wording. Loading this plugin does not authorize new generation, paid tasks, broad canvas cleanup, publishing or deletion.
 - Before editing, reread the target and the full current prompt/content. Use the page's version/expected-value checks when actually advertised. Verify project identity, make one authorized change and read back the full changed value. For creation, verify both the returned node and saved content.
 - Use page-native workspace/claim tools when available. Do not take over a canvas owned by another chat or circumvent a legacy Bridge claim. If a legacy Bridge is present, inspect its workspace status through its existing read-only API before writing the same project. When exclusive ownership cannot be established, use only read-only operations and arrange handoff.

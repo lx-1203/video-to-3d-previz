@@ -1,6 +1,6 @@
 {
   "name": "updream-codex",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "Use Updream in the Codex built-in browser without a separately loaded browser extension.",
   "author": { "name": "星迹" },
   "skills": "./skills/",

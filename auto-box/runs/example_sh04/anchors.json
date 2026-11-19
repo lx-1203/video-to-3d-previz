@@ -1,0 +1,14 @@
+﻿{
+  "actor_ids": ["B_scarf", "A_pink", "W_lavender"],
+  "anchors": [
+    {"shot_id": "SH04_final", "track_id": 0, "actor_id": "B_scarf", "start_frame": 448, "end_frame": 698,
+     "confirmation": "confirmed",
+     "evidence": "the scarf man is the subject of the whole shot: arms open at 452/470, then talking with the woman at the bar and holding her hand at 698."},
+    {"shot_id": "SH04_final", "track_id": 1, "actor_id": "A_pink", "start_frame": 448, "end_frame": 463,
+     "confirmation": "confirmed",
+     "evidence": "the pink-jacket man crosses to the right side and leaves the frame by 464."},
+    {"shot_id": "SH04_final", "track_id": 2, "actor_id": "W_lavender", "start_frame": 532, "end_frame": 698,
+     "confirmation": "confirmed",
+     "evidence": "woman in the lavender turtleneck and chunky gold necklace; she appears at 532 and stays through 698."}
+  ]
+}

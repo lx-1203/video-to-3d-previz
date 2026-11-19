@@ -1,0 +1,10 @@
+﻿# 权重、解释器、官方脚本副本不进仓库（体积过大，按 README 自行准备）
+vendor/
+
+# 跑出来的产物只保留 runs/example_sh04 样例
+runs/*
+!runs/example_sh04/
+runs/example_sh04/pose/
+
+__pycache__/
+*.pyc

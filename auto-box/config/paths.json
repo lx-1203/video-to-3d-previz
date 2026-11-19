@@ -1,0 +1,16 @@
+{
+  "_comment": "All paths are relative to this folder. Nothing needs editing unless you move the vendored weights or rebuild the venv.",
+  "python": "vendor/venv/Scripts/python.exe",
+  "pose_python": "vendor/venv/Scripts/python.exe",
+
+  "official_scripts": "vendor/video-to-3d-previz/scripts/motion",
+  "gem_repo": "vendor/GEM-X",
+  "source": "assets/source.mp4",
+
+  "checkpoint": "vendor/GEM-X/weights/body_s240000.ckpt",
+  "soma_assets": "vendor/GEM-X/assets/soma",
+  "yolox": "vendor/GEM-X/weights/yolox_humanart.onnx",
+  "yolox_sha256": "8e9ea96a176bd48501eaaa77216e49ee30794d2f8ba80c7b9862beca4ea972da",
+  "source_sha256": "88488876447778e2146ecb440f61832a873fdf756e762bc76fc68674e2e798d6",
+  "intrinsics": "assets/intrinsics.json"
+}

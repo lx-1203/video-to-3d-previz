@@ -13,6 +13,8 @@ codex plugin marketplace add lx-1203/cinematic-previz
 codex plugin add updream-codex@xingji-updream
 ```
 
+Windows ZIP 也支持[无人值守安装 Codex 应用插件](Codex-Updream/README.md#windows-无人值守安装)。
+
 ## Updream 浏览器插件：Windows 双击安装包
 
 独立 Bridge **0.3.1** 已恢复完整 0.3.0 源码线并新增离线安装体验。前往 [Windows 安装包发布页](https://github.com/lx-1203/cinematic-previz/releases/tag/updream-bridge-v0.3.1)，下载 Windows x64 ZIP，完整解压后双击 `install.bat`。包内自带 Node 与生产依赖；本机服务/Codex 注册自动完成，浏览器按中文引导确认加载一次，扩展随后自动配对，不必导入 JSON 文件。详见 [安装说明](Updream-Node-Helper/INSTALL.md) 和 [来源范围](Updream-Node-Helper/PROVENANCE.md)。

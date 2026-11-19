@@ -13,6 +13,18 @@
 
 安装器自带 Node，不需要另装 Node/Python，不打开 Edge，不移动鼠标，不控制桌面。默认稳定目录是 `%LOCALAPPDATA%\UpdreamCodex`。已有其他 Codex 配置由官方 CLI 保留，安装前在本机 `.local` 留存配置备份；不要分享这个私有目录。
 
+## Windows 无人值守安装
+
+完整解压 Windows ZIP，在解压目录中用 PowerShell 执行以下命令。它直接运行同一个安装器，跳过双击入口末尾的暂停，无需单独安装 Node。
+
+```powershell
+.\runtime\node.exe .\scripts\install.cjs
+```
+
+安装程序输出 `SUCCESS` 和安装结果 JSON，成功时退出码为 `0`，失败时为 `1`。如果桌面端使用非默认 Codex 配置目录，可添加 `--codex-home '已存在的 Codex 配置目录'`。
+
+这个命令安装的是 **Codex 应用插件**，可在「集成 → 插件」查看。独立 Bridge 是浏览器扩展，首次加载走浏览器的「加载未打包的扩展程序」入口。当前没有经过验证的 Codex 内置浏览器静默加载命令。
+
 ## 从 GitHub 快速安装
 
 已能使用 Codex CLI 时运行：

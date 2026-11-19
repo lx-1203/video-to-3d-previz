@@ -18,9 +18,9 @@ async function smoke(base,exe){
     '.codex-plugin/plugin.json',
   ])assert.deepEqual(fs.readFileSync(path.join(first.installedPath,file)),fs.readFileSync(path.join(__dirname,'../plugin',file)));
   const saved=fs.readFileSync(config,'utf8');assert.ok(saved.includes('model = "gpt-6"'));assert.ok(saved.includes('localeOverride = "zh-CN"'));assert.ok(saved.includes('command = "retained-bridge.exe"'));
-  const second=await install({installDir:target,codexHome:home,codexExe:exe||discoverCodex()});
-  assert.equal(second.version,first.version);assert.equal(fs.readFileSync(config,'utf8'),saved);
+  const second=await install({updateExisting:true,codexHome:home,codexExe:exe||discoverCodex()});
+  assert.equal(second.installDir,target);assert.equal(second.version,first.version);assert.equal(fs.readFileSync(config,'utf8'),saved);
   assert.ok(!fs.existsSync(path.join(target,'extension')));assert.ok(!fs.existsSync(path.join(target,'server')));
-  console.log(JSON.stringify({passed:true,realCodexCli:true,version:first.version,checks:['automatic local marketplace registration','official plugin installation','installed/enabled/version readback','installed source bytes verified','Chinese and special-character path','idempotent reinstall','unrelated configuration and legacy Bridge preserved'],browserConnectionTested:false,desktopInputUsed:false}));
+  console.log(JSON.stringify({passed:true,realCodexCli:true,version:first.version,checks:['automatic local marketplace registration','official plugin installation','installed/enabled/version readback','installed source bytes verified','Chinese and special-character path','idempotent update in the registered directory','unrelated configuration and legacy Bridge preserved'],browserConnectionTested:false,desktopInputUsed:false}));
 }
 if(require.main===module)smoke(path.resolve(process.argv[2]),process.argv[3]).catch(error=>{console.error(error);process.exitCode=1;});

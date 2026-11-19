@@ -42,3 +42,37 @@ test('launcher is ASCII CRLF and invokes the bundled runtime',()=>{
   assert.ok(bytes.every(b=>b<128));assert.ok(!bytes.toString().replaceAll('\r\n','').includes('\n'));
   assert.match(bytes.toString(),/runtime\\node\.exe/);
 });
+
+test('an older bundle leaves a newer installation untouched', async t => {
+  const dir = temp();
+  t.after(() => fs.rmSync(dir, {recursive: true, force: true}));
+  const sourceRoot = path.join(dir, 'bundle');
+  const installDir = path.join(dir, 'installed');
+  const pluginFile = 'plugin/.codex-plugin/plugin.json';
+  const files = {
+    'install.bat': 'installer',
+    'runtime/node.exe': 'runtime',
+    '.agents/plugins/marketplace.json': '{}',
+    [pluginFile]: JSON.stringify({name: 'updream-codex', version: '0.3.5'}),
+    'plugin/skills/updream/SKILL.md': 'old instructions',
+  };
+  for (const [name, content] of Object.entries(files)) {
+    const destination = path.join(sourceRoot, name);
+    fs.mkdirSync(path.dirname(destination), {recursive: true});
+    fs.writeFileSync(destination, content);
+  }
+  const hashes = Object.fromEntries(Object.entries(files).map(
+    ([name, content]) => [name, createHash('sha256').update(content).digest('hex')],
+  ));
+  fs.writeFileSync(path.join(sourceRoot, 'bundle-manifest.json'),
+    JSON.stringify({version: '0.3.5', files: hashes}));
+  const existing = path.join(installDir, pluginFile);
+  const newer = JSON.stringify({name: 'updream-codex', version: '0.3.6'});
+  fs.mkdirSync(path.dirname(existing), {recursive: true});
+  fs.writeFileSync(existing, newer);
+  await assert.rejects(install({
+    sourceRoot, installDir, codexHome: path.join(dir, 'codex-home'),
+    codexExe: path.join(dir, 'unused.exe'), progress: () => {},
+  }), /refusing to downgrade/i);
+  assert.equal(fs.readFileSync(existing, 'utf8'), newer);
+});

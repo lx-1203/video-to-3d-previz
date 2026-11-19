@@ -17,6 +17,7 @@ Use the host's supported **built-in browser** tools. This plugin supplies a work
   .\runtime\node.exe .\scripts\install.cjs
   ```
 
+  For an existing installer-based marketplace, add `--update-existing` so the installer resolves and updates the registered directory automatically. Confirm the enabled version and the installed skill contents before continuing.
   If this shell does not use the target desktop's Codex configuration, pass `--codex-home '<existing target Codex configuration directory>'` after identifying it. The installer checks bundle hashes, registers the local marketplace through the official Codex CLI, installs the plugin and reads back the enabled version. Require exit code 0 and the expected version in the final JSON; on failure, report the stage. Check live browser access separately. An active chat may still have the previous skill loaded; preserve ongoing work and do not restart the app as part of unattended installation.
 - For an explicit **Bridge browser extension** request, use the browser's supported **Load unpacked** interface and the provisioned Bridge extension directory with its local pairing. Use authorized app controls for the folder selection when available; if the picker or a required confirmation needs the user, ask only for that step. The app plugin installer does not load the Bridge. A silent Bridge install and working connectivity in Codex's built-in browser have not been verified. Verify the extension is listed and enabled, then verify the connection with a read-only canvas check before reporting it works.
 

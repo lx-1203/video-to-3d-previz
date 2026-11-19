@@ -1,6 +1,6 @@
-# Updream for Codex 0.3.6
+# Updream for Codex 0.3.7
 
-0.3.6 把无人值守安装和版本核验写进随包附带的 Updream 技能，并保留逐批合并与排版流程。下方 Windows 下载链接指向已发布的 0.3.2。可按文末命令从当前源码构建 0.3.6。
+0.3.7 新增原位更新，自动沿用已登记的安装目录，防止旧包覆盖新版。下方 Windows 下载链接指向已发布的 0.3.2。可按文末命令从当前源码构建 0.3.7。
 
 这个版本优先使用 **Codex 桌面端自带浏览器**。不再要求安装 Edge 扩展、开启开发人员模式、选择扩展文件夹、导入配对 JSON 或启动额外 Bridge 服务。
 
@@ -22,6 +22,8 @@
 ```
 
 安装程序输出 `SUCCESS` 和安装结果 JSON，成功时退出码为 `0`，失败时为 `1`。如果桌面端使用非默认 Codex 配置目录，可添加 `--codex-home '已存在的 Codex 配置目录'`。
+
+更新已有本地安装时，给同一命令加 `--update-existing`。安装器从 Codex 读出现有 `xingji-updream` 目录，直接更新该目录并通过官方 CLI 刷新启用的插件，核对已生效的版本与插件文件。维护者可在下方验包命令末尾加 `--apply-local`，通过隔离安装验证后自动应用到本机。
 
 这个命令安装的是 **Codex 应用插件**，可在「集成 → 插件」查看。独立 Bridge 是浏览器扩展，首次加载走浏览器的「加载未打包的扩展程序」入口。当前没有经过验证的 Codex 内置浏览器静默加载命令。
 
@@ -53,7 +55,7 @@ codex plugin add updream-codex@xingji-updream
 ```text
 node --test Codex-Updream/tests/*.test.cjs
 python Codex-Updream/scripts/package-windows.py
-python Codex-Updream/scripts/verify-package.py Codex-Updream/artifacts/updream-codex-0.3.6-windows-x64.zip --codex-exe <官方Codex.exe路径>
+python Codex-Updream/scripts/verify-package.py Codex-Updream/artifacts/updream-codex-0.3.7-windows-x64.zip --codex-exe <官方Codex.exe路径>
 ```
 
 实际 ZIP 安装测试只使用临时 CODEX_HOME，验证官方 CLI、安装版本/启用状态、重装和配置保留，不操作真实桌面或网站。包内 Node 固定为官方 24.18.0 Windows x64，SHA256 为 `9a4eb5f1c29c6a2e93852ead46b999e284a6a5ca8bab4d4e241d587d025a52de`，随包保留官方许可。

@@ -40,16 +40,52 @@ function assertTarget(target){
     if(path.dirname(p)===p)break;
   }
 }
-async function install({sourceRoot=path.join(__dirname,'..'),installDir,codexHome,codexExe,progress=console.log}={}){
+function versionParts(version) {
+  if (typeof version !== 'string' || !/^\d+\.\d+\.\d+$/.test(version)) {
+    throw new Error('Expected a stable Updream version: ' + version);
+  }
+  return version.split('.').map(BigInt);
+}
+function assertUpgradeVersion(target, incoming) {
+  const next = versionParts(incoming);
+  const file = safePath(target, 'plugin/.codex-plugin/plugin.json');
+  if (!fs.existsSync(file)) return;
+  const previous = JSON.parse(fs.readFileSync(file, 'utf8'));
+  if (previous.name !== PLUGIN) throw new Error('Installation directory belongs to another plugin');
+  const before = versionParts(previous.version);
+  for (let i = 0; i < next.length; i++) {
+    if (before[i] > next[i]) throw new Error(`Refusing to downgrade Updream from ${previous.version} to ${incoming}`);
+    if (before[i] < next[i]) return;
+  }
+}
+function registeredInstallDir(exe, home) {
+  const result = runCodex(exe, ['plugin', 'marketplace', 'list', '--json'], {codexHome: home});
+  const matches = result.marketplaces?.filter(entry => entry.name === MARKETPLACE);
+  if (matches?.length !== 1 || typeof matches[0].root !== 'string' || !path.isAbsolute(matches[0].root)) {
+    throw new Error('The existing Updream marketplace directory could not be resolved');
+  }
+  const target = path.resolve(matches[0].root);
+  assertTarget(target);
+  if (!fs.existsSync(safePath(target, 'bundle-manifest.json'))
+      || !fs.existsSync(safePath(target, 'plugin/.codex-plugin/plugin.json'))) {
+    throw new Error('The registered Updream marketplace is not a local installer bundle');
+  }
+  return target;
+}
+async function install({sourceRoot=path.join(__dirname,'..'),installDir,codexHome,codexExe,updateExisting=false,progress=console.log}={}){
   progress('[1/5] Checking the offline package...');
   const manifest=verifyBundle(sourceRoot);
   for(const name of ['install.bat','runtime/node.exe','.agents/plugins/marketplace.json','plugin/.codex-plugin/plugin.json','plugin/skills/updream/SKILL.md'])if(!Object.hasOwn(manifest.files,name))throw new Error('Required bundle file missing: '+name);
   const plugin=JSON.parse(fs.readFileSync(path.join(sourceRoot,'plugin/.codex-plugin/plugin.json'),'utf8'));
   if(plugin.name!==PLUGIN||plugin.version!==manifest.version)throw new Error('Plugin and package versions do not match');
   const exe=codexExe||discoverCodex();
-  const target=path.resolve(installDir||path.join(process.env.LOCALAPPDATA||path.join(os.homedir(),'AppData','Local'),'UpdreamCodex'));
   const home=path.resolve(codexHome||process.env.CODEX_HOME||path.join(os.homedir(),'.codex'));
-  assertTarget(target);fs.mkdirSync(target,{recursive:true});
+  if (updateExisting && installDir) throw new Error('An in-place update must use the registered Updream directory');
+  const target = updateExisting ? registeredInstallDir(exe, home)
+    : path.resolve(installDir || path.join(process.env.LOCALAPPDATA || path.join(os.homedir(),'AppData','Local'), 'UpdreamCodex'));
+  assertTarget(target);
+  assertUpgradeVersion(target, manifest.version);
+  fs.mkdirSync(target,{recursive:true});
   progress('[2/5] Copying plugin files to a stable local directory...');
   for(const [name,expected]of Object.entries(manifest.files)){
     const destination=safePath(target,name);fs.mkdirSync(path.dirname(destination),{recursive:true});
@@ -65,6 +101,14 @@ async function install({sourceRoot=path.join(__dirname,'..'),installDir,codexHom
   progress('[4/5] Installing Updream for Codex automatically...');
   const added=runCodex(exe,['plugin','add',`${PLUGIN}@${MARKETPLACE}`,'--json'],{codexHome:home});
   if(added.name!==PLUGIN||added.version!==manifest.version)throw new Error('Codex installed an unexpected plugin or version');
+  if (typeof added.installedPath !== 'string' || !path.isAbsolute(added.installedPath)) {
+    throw new Error('Codex did not return an installed plugin directory');
+  }
+  for (const [name, expected] of Object.entries(manifest.files)) {
+    if (name.startsWith('plugin/') && hash(safePath(added.installedPath, name.slice('plugin/'.length))) !== expected) {
+      throw new Error('Installed plugin checksum mismatch: ' + name);
+    }
+  }
   progress('[5/5] Reading back the installed and enabled plugin...');
   const listed=runCodex(exe,['plugin','list','--marketplace',MARKETPLACE,'--json'],{codexHome:home});
   const entry=listed.installed?.find(value=>value.name===PLUGIN&&value.marketplaceName===MARKETPLACE);
@@ -80,6 +124,10 @@ module.exports={verifyBundle,runCodex,discoverCodex,install};
 if(require.main===module){
   const options={},args=process.argv.slice(2);
   for(let i=0;i<args.length;i++){
+    if (args[i] === '--update-existing') {
+      options.updateExisting = true;
+      continue;
+    }
     const key={'--install-dir':'installDir','--codex-home':'codexHome','--codex-exe':'codexExe'}[args[i]];
     if(!key||!args[i+1]){console.error('Unknown installer option: '+args[i]);process.exitCode=1;return;}
     options[key]=args[++i];

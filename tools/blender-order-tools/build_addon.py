@@ -10,7 +10,7 @@ import zipfile
 FILES = (
     "orderflow/__init__.py", "orderflow/core.py", "orderflow/worker.py",
     "orderflow/media.py", "orderflow/ui.py", "orderflow/motion.py",
-    "orderflow/palette.py", "orderflow/acceptance.py", "README.md", "examples/palette.json",
+    "orderflow/palette.py", "orderflow/acceptance.py", "orderflow/camera.py", "README.md", "examples/palette.json",
 )
 
 
@@ -31,6 +31,13 @@ def build(root, output):
         if path.suffix == ".py":
             ast.parse(data, filename=name)
         payload[target] = data
+    repo = root.parents[1]
+    solver = repo / "camera-solve/addon/jsonio.py"
+    if not solver.is_file() or solver.is_symlink() or not solver.resolve().is_relative_to(repo):
+        raise ValueError("Missing or linked CameraSolve planner")
+    solver_data = solver.read_bytes()
+    ast.parse(solver_data, filename=str(solver))
+    payload["orderflow/camera_solve_jsonio.py"] = solver_data
     init = ast.parse(payload["orderflow/__init__.py"])
     info = next(ast.literal_eval(node.value) for node in init.body
                 if isinstance(node, ast.Assign)

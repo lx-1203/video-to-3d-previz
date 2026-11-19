@@ -55,6 +55,11 @@ class OrderFlowSettings(bpy.types.PropertyGroup):
     source_start_seconds: FloatProperty(name="参考起点（秒）", default=0.0, min=0.0,
                                       description="工程首帧对应的原片时间；片段起始帧会另按帧率偏移")
     camera_name: StringProperty(name="相机", description="留空时使用工程当前活动相机")
+    camera_measurements: StringProperty(name="CameraSolve JSON", subtype="FILE_PATH")
+    camera_shot: IntProperty(name="镜头号", default=0, min=0)
+    camera_anchor: FloatProperty(name="相对变焦基准（mm）", default=0.0, min=0.0,
+                                 description="只有相对变焦时使用。0 表示未填写")
+    camera_message: StringProperty(name="焦距状态", default="请选择测量文件和镜头号。")
     model_standard: StringProperty(name="模型规范（可选）", subtype="FILE_PATH")
     palette_path: StringProperty(name="角色配色 JSON", subtype="FILE_PATH")
     overlay_protocol: StringProperty(name="骨骼同帧审核协议", subtype="FILE_PATH")
@@ -501,6 +506,41 @@ class ORDERFLOW_OT_apply_palette(bpy.types.Operator):
         return {'FINISHED'}
 
 
+class ORDERFLOW_OT_camera_focal(bpy.types.Operator):
+    bl_idname = "orderflow.camera_focal"
+    bl_label = "CameraSolve 焦距候选"
+    bl_options = {"REGISTER", "UNDO", "INTERNAL"}
+
+    apply_keys: bpy.props.BoolProperty(name="应用焦距候选", options={"SKIP_SAVE"})
+
+    def execute(self, context):
+        from . import camera
+
+        settings = context.scene.orderflow
+        try:
+            if not settings.camera_measurements:
+                raise ValueError("请先选择 CameraSolve JSON。")
+            target, plan = camera.preview(context.scene, settings, _absolute(settings.camera_measurements),
+                                          _absolute(settings.reference_video))
+            first, last = plan.keys[0][0], plan.keys[-1][0]
+            values = [value for _, value in plan.keys]
+            label = "相对变焦" if plan.relative else "实测焦距"
+            status = (f"{label} | 帧 {first}–{last} | 当前 {target.data.lens:.2f} mm，"
+                      f"候选 {min(values):.2f}–{max(values):.2f} mm")
+            if self.apply_keys:
+                camera.apply(context.scene, target, plan)
+                status = "已应用 | " + status
+            elif plan.blocker:
+                status = plan.blocker + " " + status
+            settings.camera_message = status
+            self.report({"INFO"}, status)
+        except (OSError, KeyError, TypeError, ValueError, RuntimeError) as exc:
+            settings.camera_message = str(exc)
+            self.report({"ERROR"}, str(exc))
+            return {"CANCELLED"}
+        return {"FINISHED"}
+
+
 class ORDERFLOW_PT_main(bpy.types.Panel):
     bl_label = "接单助手 / OrderFlow"
     bl_idname = "ORDERFLOW_PT_main"
@@ -551,10 +591,31 @@ class ORDERFLOW_PT_main(bpy.types.Panel):
         layout.label(text="工具路径在插件偏好设置中配置。", icon="PREFERENCES")
 
 
+class ORDERFLOW_PT_camera(bpy.types.Panel):
+    bl_label = "CameraSolve 焦距"
+    bl_idname = "ORDERFLOW_PT_camera"
+    bl_parent_id = "ORDERFLOW_PT_main"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "接单助手"
+    bl_options = {"DEFAULT_CLOSED"}
+
+    def draw(self, context):
+        layout, settings = self.layout, context.scene.orderflow
+        layout.prop(settings, "camera_measurements")
+        layout.prop(settings, "camera_shot")
+        layout.prop(settings, "camera_anchor")
+        row = layout.row(align=True)
+        row.operator("orderflow.camera_focal", text="预览候选", icon="VIEWZOOM").apply_keys = False
+        row.operator("orderflow.camera_focal", text="应用焦距", icon="KEYFRAME_HLT").apply_keys = True
+        layout.label(text=settings.camera_message)
+
+
 _CLASSES = (OrderFlowSettings, OrderFlowPreferences, ORDERFLOW_OT_preflight, ORDERFLOW_OT_preview,
             ORDERFLOW_OT_export_final, ORDERFLOW_OT_cancel, ORDERFLOW_OT_refresh, ORDERFLOW_OT_open_output,
             ORDERFLOW_OT_package, ORDERFLOW_OT_motion_status, ORDERFLOW_OT_motion_next,
-            ORDERFLOW_OT_import_motion_reference, ORDERFLOW_OT_apply_palette, ORDERFLOW_PT_main)
+            ORDERFLOW_OT_import_motion_reference, ORDERFLOW_OT_apply_palette, ORDERFLOW_OT_camera_focal,
+            ORDERFLOW_PT_main, ORDERFLOW_PT_camera)
 
 
 def register():

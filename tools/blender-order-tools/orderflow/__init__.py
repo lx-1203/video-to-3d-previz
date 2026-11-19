@@ -3,10 +3,10 @@
 bl_info = {
     "name": "接单助手 / OrderFlow",
     "author": "OrderFlow",
-    "version": (0, 1, 0),
+    "version": (0, 2, 0),
     "blender": (4, 2, 0),
     "location": "3D View > Sidebar > 接单助手",
-    "description": "保留工程、辅助动作参考、后台试渲与交稿打包",
+    "description": "辅助焦距与动作参考、后台试渲与交稿打包",
     "category": "Import-Export",
 }
 

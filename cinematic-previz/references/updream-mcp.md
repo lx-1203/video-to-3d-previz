@@ -162,7 +162,7 @@ checked 只支持 name/prompt。模型、比例、参考图用 update_node，再
 
 用户明确偏好 Codex、不要 Edge/Chrome 扩展或不要桌面控制时，优先使用独立 `updream-codex` 原生插件。Windows 0.3.2 安装包通过官方 Codex CLI 自动注册 local marketplace、安装插件并读回 enabled/version，不要求开发人员模式、选择浏览器扩展目录或导入配对 JSON。
 
-GitHub 快装：`codex plugin marketplace add lx-1203/cinematic-previz`，随后 `codex plugin add updream-codex@xingji-updream`。用户已有安装授权时不反复确认同一步；本机安装由用户自行双击时，只交付包，不替用户操作桌面。
+GitHub 快装：`codex plugin marketplace add lx-1203/video-to-3d-previz`，随后 `codex plugin add updream-codex@xingji-updream`。用户已有安装授权时不反复确认同一步；本机安装由用户自行双击时，只交付包，不替用户操作桌面。
 
 运行时复用宿主公开的内置浏览器能力，优先发现当前页实际提供的 Site tools/WebMCP；没有合适工具时仅使用同一浏览器已公开的页面界面能力。原生插件不新增浏览器驱动或账户凭据，不能绕过宿主权限、注入私有接口、搬运 cookies 或偷偷改安全设置。插件安装完成、浏览器可用、页面可读、正确项目已验证和写入已读回是不同状态，必须分别报告。初次预检曾超时；2026-11-09 后续已通过原生 WebMCP 完成真实画布读取、新建文本节点、完整编辑草稿读回、撤销及空画布基线核对。此结果证明本次调用可读写，不证明宿主间歇延迟已永久消除，也不等于生成内容已完成。
 

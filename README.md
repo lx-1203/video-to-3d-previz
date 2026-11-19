@@ -1,5 +1,7 @@
 # 视频转3D白模
 
+本仓库统一维护视频转 3D 白模和 [漫剧导演预演 / cinematic-previz](cinematic-previz/README.md)。白模工作流从根目录进入，漫剧分镜、镜头接力及 Updream 工具从 `cinematic-previz/` 进入。[原 cinematic-previz 仓库的历史安装包](https://github.com/lx-1203/cinematic-previz/releases) 仍可下载。
+
 将参考视频复刻为可编辑的Blender白模预演，覆盖空间、机位、人物动作、环境还色、身份色、球面焦点标记、头身与手型、原声音轨与4K上下对照交付。包含实际制作经验、质量门槛和任务模板；技术检查通过不等于整体95%视觉相似度通过。已要求场景还色时，“白模”不能解释为灰白环境。
 
 ## 视频转白模工具箱

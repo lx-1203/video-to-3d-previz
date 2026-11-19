@@ -9,7 +9,7 @@
 已有 CLI 的 GitHub 快装命令：
 
 ```text
-codex plugin marketplace add lx-1203/cinematic-previz
+codex plugin marketplace add lx-1203/video-to-3d-previz
 codex plugin add updream-codex@xingji-updream
 ```
 

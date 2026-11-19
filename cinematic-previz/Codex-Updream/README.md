@@ -30,7 +30,7 @@
 已能使用 Codex CLI 时运行：
 
 ```text
-codex plugin marketplace add lx-1203/cinematic-previz
+codex plugin marketplace add lx-1203/video-to-3d-previz
 codex plugin add updream-codex@xingji-updream
 ```
 

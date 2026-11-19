@@ -4,7 +4,7 @@ metadata:
   author: "星迹"
   version: "0.6.0"
   plugin_version: "0.6.0"
-description: Use when creating or revising 漫剧、短剧、导演分镜、Blender 白模预演、首帧生图、AI 视频、镜头接力、漫剧项目目录整理与回收恢复，或在 Updream、即梦使用 MCP 浏览器插件操作节点、多聊天分工和初始化工作区，或通过 LibTV 官方 Remote MCP 复用素材与整理画布；不用于单独建模或普通视频转码。
+description: Use when creating or revising 漫剧、短剧、导演分镜、Excel分镜与补图、Blender 白模预演、首帧生图、AI 视频、镜头接力、漫剧项目目录整理与回收恢复，或在 Updream、即梦使用 MCP 浏览器插件操作节点、多聊天分工和初始化工作区，或通过 LibTV 官方 Remote MCP 复用素材与整理画布；不用于单独建模或普通视频转码。
 ---
 
 # 星迹的AIGC
@@ -23,6 +23,8 @@ description: Use when creating or revising 漫剧、短剧、导演分镜、Blen
 
 默认先核算朗读，再排每15秒一个multi_shot包；Excel主表一包一行，六项指导仅在“提示词指导”分表，不增“来源位置”列。完整词保留[分层格式与校验](references/prompts.md#提示词正文交付检查)。实际生成逐字取主表已审原词；缺素材直接告知用户，缺已审词或平台完整读回不一致时暂停该任务；continue原样用实际出点尾帧；未要求不制规划尾帧。未执行、缺素材与待审核如实标记。
 
+Excel分镜默认交付含图版。先复用并嵌入有效图片，再自动制作缺失且必要的首帧与参考图，导出后复查图文位置。按[Excel实图补齐与摆放](references/director.md#excel实图补齐与摆放)执行，明确仅交文字或限改局部时按用户范围。
+
 ## 按任务读取
 
 用 `python "<skill-dir>/scripts/read_modules.py" read <模块ID>` 读取，同脚本tree命令查ID；[索引](module-index.json)自动带入core、父节点和必要依赖。仅追加当前任务触发的专项；完整分镜保留必需设计与交付。
@@ -30,7 +32,7 @@ description: Use when creating or revising 漫剧、短剧、导演分镜、Blen
 | 触发条件 | 读取模块 |
 | --- | --- |
 | 写/改视频提示词 | prompts；按正文里的写词/执行条件使用 |
-| 制作/修改/交付Excel分镜 | storyboard；务必先盘点已有资产，将本包适用的实图、ID与版本填入主表；缺失/不适用写明原因，见[主表规范](references/director.md#默认交付专业分镜表) |
+| 制作/修改/交付Excel分镜 | storyboard；按[实图补齐与摆放](references/director.md#excel实图补齐与摆放)完成复用、补图、按栏嵌入与导出复查 |
 | 查或改风格/表演/打光/声音 | 对应style / performance / lighting / sound |
 | 确定使用某种运镜/转场 | 对应camera.<方法> / transitions.<方法> |
 | 制作人物/表情/物品资产 | 对应character-assets / expression-assets / prop-assets |

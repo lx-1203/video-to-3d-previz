@@ -42,7 +42,7 @@ Excel分镜默认交付含图版。先复用并嵌入有效图片，再自动制
 | 制作首帧/三维预演 | previs.start / previs.3d |
 | 排时长或核算朗读 | timing |
 | 实际生成视频 | generation；任务间续接再加handoff |
-| 实际操作某平台 | 只读相应platform模块；新增／整理Updream节点还读platform.layout，按实际尺寸分区排版并分别完成结构与视觉验收 |
+| 实际操作某平台 | 只读相应platform模块；新增、迁入、合并或整理Updream节点都读platform.layout；跨项目每批先留空区、核对迁入，再自动排版和验收 |
 | 整理记录/项目/交付 | 对应records / organization / delivery；完整制作读workflow |
 | 采用课堂方法或查60项镜头 | camera.classroom；[课件适用条件](references/classroom-storyboard.md) |
 | 修改skill或排查工具 | runtime及[维护指南](references/maintenance-release.md)；反馈按platform.feedback |

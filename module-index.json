@@ -436,6 +436,7 @@
         "expression-assets",
         "execution",
         "prop-assets",
+        "scene-assets",
         "stages"
       ]
     },
@@ -518,6 +519,7 @@
         "character-assets",
         "expression-assets",
         "prop-assets",
+        "scene-assets",
         "transitions",
         "execution"
       ]
@@ -534,6 +536,14 @@
       }
     },
     {
+      "id": "scene-assets",
+      "title": "场地一致性与多机位场景参考",
+      "parent": "production",
+      "source": {
+        "path": "references/scene-assets.md"
+      }
+    },
+    {
       "id": "handoff",
       "title": "真实尾帧与镜头接力",
       "parent": "production",
@@ -541,7 +551,8 @@
         "path": "references/frame-handoff.md"
       },
       "requires": [
-        "continuity"
+        "continuity",
+        "scene-assets"
       ]
     },
     {

@@ -38,6 +38,7 @@ Excel分镜默认交付含图版。先复用并嵌入有效图片，再自动制
 | 查或改风格/表演/打光/声音 | 对应style / performance / lighting / sound |
 | 确定使用某种运镜/转场 | 对应camera.<方法> / transitions.<方法> |
 | 制作人物/表情/物品资产 | 对应character-assets / expression-assets / prop-assets |
+| 制作场景参考、跨机位统一场地 | scene-assets；根据可用视角和遮挡精度选图片控制或三维底模 |
 | 制作首帧/三维预演 | previs.start / previs.3d |
 | 排时长或核算朗读 | timing |
 | 实际生成视频 | generation；任务间续接再加handoff |

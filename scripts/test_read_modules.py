@@ -140,6 +140,16 @@ class ModuleReaderTests(unittest.TestCase):
         self.assertNotIn('workflow', ids)
         self.assertNotIn('platform.updream', ids)
 
+    def test_scene_assets_load_when_preparing_shots_and_can_be_read_alone(self):
+        for route in ('scene-assets', 'previs.start', 'storyboard', 'generation', 'handoff'):
+            with self.subTest(route=route):
+                out = self.invoke('read', route, '--json')
+                self.assertEqual(out.returncode, 0, out.stderr)
+                ids = [node['id'] for node in json.loads(out.stdout)['modules']]
+                self.assertEqual(ids.count('scene-assets'), 1)
+                if route == 'scene-assets':
+                    self.assertEqual(set(ids), {'core', 'scene-assets'})
+
     def test_generation_routes_include_transition_execution_division(self):
         for route in ('generation', 'workflow'):
             with self.subTest(route=route):

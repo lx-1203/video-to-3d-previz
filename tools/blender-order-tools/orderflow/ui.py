@@ -66,6 +66,10 @@ class OrderFlowSettings(bpy.types.PropertyGroup):
     overlay_report: StringProperty(name="骨骼同帧审核报告", subtype="FILE_PATH")
     overlay_required_actors: StringProperty(name="审核角色 IDs", description="明确列出需要审核的稳定角色 ID，英文逗号分隔，不可重复")
     motion_job: StringProperty(name="动作任务目录", subtype="DIR_PATH")
+    motion_template: StringProperty(name="动作角色模板", subtype="FILE_PATH")
+    motion_profile: StringProperty(name="模板绑定配置", subtype="FILE_PATH")
+    motion_config: StringProperty(name="动作后端配置", subtype="FILE_PATH")
+    motion_bvh: StringProperty(name="已有 BVH（可选）", subtype="FILE_PATH")
     motion_result_path: StringProperty(name="动作辅助结果", subtype="FILE_PATH")
     motion_anchor_name: StringProperty(name="参考放置锚点", description="留空使用 3D 游标；只影响新导入的参考")
     active_job_dir: StringProperty(name="当前导出任务", subtype="DIR_PATH")
@@ -263,11 +267,14 @@ def _update_motion(settings):
 
 
 def _status_timer():
+    from . import workflow_ui
+
     for scene in bpy.data.scenes:
         if hasattr(scene, "orderflow"):
             try:
                 _update_status(scene.orderflow)
                 _update_motion(scene.orderflow)
+                workflow_ui.refresh(scene)
             except (OSError, ValueError, TypeError, KeyError, ImportError) as exc:
                 scene.orderflow.status_message = f"无法读取任务状态：{exc}"
     for area in (bpy.context.screen.areas if bpy.context.screen else []):
@@ -462,6 +469,40 @@ class ORDERFLOW_OT_motion_status(bpy.types.Operator):
         return _motion_action(self, context, "status")
 
 
+class ORDERFLOW_OT_motion_init(bpy.types.Operator):
+    bl_idname = "orderflow.motion_init"
+    bl_label = "从订单新建动作任务"
+
+    def execute(self, context):
+        from . import core, motion
+
+        scene, settings = context.scene, context.scene.orderflow
+        try:
+            inputs = {key: _absolute(value) for key, value in (
+                ('video', settings.reference_video), ('template', settings.motion_template),
+                ('profile', settings.motion_profile), ('config', settings.motion_config),
+                ('motion', settings.motion_bvh))}
+            required = ['video', 'template', 'profile', 'config'] + (['motion'] if inputs['motion'] else [])
+            if not settings.output_root or any(not Path(inputs[key]).is_file() for key in required):
+                raise ValueError('请指定输出目录、参考视频、角色模板、绑定配置与有效后端。')
+            fps = scene.render.fps / scene.render.fps_base
+            first, last = settings.frame_start, settings.frame_end
+            inputs.update(start=settings.source_start_seconds + (first - scene.frame_start) / fps,
+                          duration=(last - first + 1) / fps)
+            if first < scene.frame_start or not 0 < inputs['duration'] <= 60:
+                raise ValueError('动作任务须使用工程内 0 到 60 秒的有效帧段。')
+            job = core.new_job_dir(_absolute(settings.output_root), 'motion')
+            result = motion.motion_init(SimpleNamespace(motion_job=str(job),
+                                        source_start_seconds=settings.source_start_seconds), preferences(context), inputs)
+            settings.motion_job = str(job)
+            settings.motion_result_path = result['result_path']
+            settings.motion_message = '正在后台创建动作任务。'
+        except (OSError, ValueError, RuntimeError) as exc:
+            self.report({'ERROR'}, str(exc))
+            return {'CANCELLED'}
+        return {'FINISHED'}
+
+
 class ORDERFLOW_OT_motion_next(bpy.types.Operator):
     bl_idname = "orderflow.motion_next"
     bl_label = "继续动作辅助"
@@ -581,6 +622,11 @@ class ORDERFLOW_PT_main(bpy.types.Panel):
         row.operator("orderflow.package", icon="PACKAGE")
         box = layout.box()
         box.label(text="动作参考（保留现有角色动作）")
+        box.prop(settings, "motion_template")
+        box.prop(settings, "motion_profile")
+        box.prop(settings, "motion_config")
+        box.prop(settings, "motion_bvh")
+        box.operator("orderflow.motion_init", icon="ADD")
         box.prop(settings, "motion_job")
         box.prop_search(settings, "motion_anchor_name", context.scene, "objects")
         row = box.row(align=True)
@@ -613,21 +659,27 @@ class ORDERFLOW_PT_camera(bpy.types.Panel):
 
 _CLASSES = (OrderFlowSettings, OrderFlowPreferences, ORDERFLOW_OT_preflight, ORDERFLOW_OT_preview,
             ORDERFLOW_OT_export_final, ORDERFLOW_OT_cancel, ORDERFLOW_OT_refresh, ORDERFLOW_OT_open_output,
-            ORDERFLOW_OT_package, ORDERFLOW_OT_motion_status, ORDERFLOW_OT_motion_next,
+            ORDERFLOW_OT_package, ORDERFLOW_OT_motion_status, ORDERFLOW_OT_motion_init, ORDERFLOW_OT_motion_next,
             ORDERFLOW_OT_import_motion_reference, ORDERFLOW_OT_apply_palette, ORDERFLOW_OT_camera_focal,
             ORDERFLOW_PT_main, ORDERFLOW_PT_camera)
 
 
 def register():
+    from . import workflow_ui
+
     for cls in _CLASSES:
         bpy.utils.register_class(cls)
     bpy.types.Scene.orderflow = PointerProperty(type=OrderFlowSettings)
+    workflow_ui.register()
     _ensure_timer()
 
 
 def unregister():
+    from . import workflow_ui
+
     if bpy.app.timers.is_registered(_status_timer):
         bpy.app.timers.unregister(_status_timer)
+    workflow_ui.unregister()
     if hasattr(bpy.types.Scene, "orderflow"):
         del bpy.types.Scene.orderflow
     for cls in reversed(_CLASSES):

@@ -1,0 +1,9 @@
+{
+  "python": "backend/venv/Scripts/python.exe",
+  "pose_python": "backend/venv/Scripts/python.exe",
+  "gem_repo": "backend/GEM-X",
+  "checkpoint": "backend/GEM-X/weights/body_s240000.ckpt",
+  "soma_assets": "backend/GEM-X/assets/soma",
+  "yolox": "backend/GEM-X/weights/yolox_humanart.onnx",
+  "intrinsics": "order/intrinsics.json"
+}

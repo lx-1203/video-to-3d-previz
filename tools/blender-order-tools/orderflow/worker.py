@@ -151,6 +151,19 @@ def run_job(job_path):
     media.run_process([spec['media_python'], str(Path(__file__).with_name('media.py')), '--check-env', '--job', str(job_path)], job_dir/'environment_check.log', job_dir)
     core.write_status(job_dir,'rendering',message='Opening frozen snapshot',visual_status='unverified',mode=spec['mode'])
     bpy.ops.wm.open_mainfile(filepath=spec['snapshot_blend'],load_ui=False,use_scripts=False)
+    for collection in list(bpy.data.collections):
+        if collection.get('orderflow_internal_reference') and collection.hide_render:
+            for obj in list(collection.objects):
+                if 'orderflow_pose_provenance' in obj:
+                    mesh = obj.data
+                    keys = mesh.shape_keys
+                    action = keys.animation_data.action if keys and keys.animation_data else None
+                    bpy.data.objects.remove(obj, do_unlink=True)
+                    if not mesh.users:
+                        bpy.data.meshes.remove(mesh)
+                    if action and not action.users:
+                        bpy.data.actions.remove(action)
+            bpy.data.collections.remove(collection)
     scene=bpy.context.scene
     compositor_errors = unsupported_compositor_outputs(scene)
     if compositor_errors:

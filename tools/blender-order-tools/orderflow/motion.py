@@ -48,13 +48,13 @@ def _job_file(value):
     return path if path.is_file() else path / 'job.json'
 
 
-def _validate_config(config):
+def _validate_config(config, initializing=False):
     for key in ('media_python', 'motion_cli', 'motion_update_script'):
         value = config.get(key)
         if not isinstance(value, str) or not value.strip() or not Path(value).is_file():
             raise ValueError('请配置有效路径：' + key)
     job_file = _job_file(config.get('motion_job'))
-    if not job_file.is_file():
+    if not initializing and not job_file.is_file():
         raise ValueError('动作任务缺少 job.json')
     return job_file
 
@@ -102,10 +102,24 @@ def _gate(config):
 def run_action(action, config, log=None):
     result = dict(ok=False, state='failed', code='MOTION_BLOCKED', message='', artifacts={}, next_action=None)
     try:
-        if action not in ('status', 'next'):
+        if action not in ('status', 'next', 'init'):
             raise ValueError('不支持的动作辅助操作')
-        job_file = _validate_config(config)
+        job_file = _validate_config(config, initializing=action == 'init')
         gate = _gate(config)
+        if action == 'init':
+            cli = Path(gate['skill_file']).parent / 'scripts/motion/motion_workbench.py'
+            if cli.resolve() != Path(config['motion_cli']).resolve():
+                raise ValueError('动作工作台路径须对应通过在线检查的安装目录。')
+            command = [config['media_python'], '-B', str(cli), 'init', '--job', str(job_file.parent)]
+            for key in ('video', 'template', 'profile', 'config', 'start', 'duration'):
+                command.extend(['--' + key, str(config['init'][key])])
+            if config['init'].get('motion'):
+                command.extend(['--motion', config['init']['motion']])
+            payload = _run_json(command, timeout=90, log=log)
+            if not payload.get('ok') or not job_file.is_file():
+                raise ValueError('动作工作台未创建有效的任务。')
+            return dict(ok=True, state='initialized', message='已创建动作任务，可以继续动作辅助。',
+                        job_path=str(job_file), gate=gate)
         job_sha = _sha(job_file)
         status = _run_json([config['media_python'], '-B', config['motion_cli'], 'status', '--job', config['motion_job']])
         if status.get('ok') is not True:
@@ -147,10 +161,12 @@ def run_action(action, config, log=None):
     return result
 
 
-def _queue(action, settings, prefs):
+def _queue(action, settings, prefs, init=None):
     _HELPERS[:] = [process for process in _HELPERS if process.poll() is None]
     config = {key: getattr(prefs, key) for key in ('media_python', 'motion_cli', 'motion_update_script')}
     config.update(motion_job=settings.motion_job, source_start_seconds=settings.source_start_seconds)
+    if init is not None:
+        config['init'] = init
     # Blender's // relative paths are resolved only on the main thread before spawning.
     try:
         import bpy
@@ -161,7 +177,8 @@ def _queue(action, settings, prefs):
             if not str(config[key]).strip():
                 raise ValueError('请配置有效路径：' + key)
             config[key] = bpy.path.abspath(config[key])
-    root = _validate_config(config).parent / 'ui_tasks' / uuid.uuid4().hex
+    job = _validate_config(config, initializing=action == 'init').parent
+    root = (job.parent / 'motion_init_status' if action == 'init' else job / 'ui_tasks') / uuid.uuid4().hex
     root.mkdir(parents=True, exist_ok=False)
     input_path, result_path = root / 'input.json', root / 'result.json'
     _write(input_path, config)
@@ -181,6 +198,10 @@ def motion_status(settings, prefs):
 
 def motion_next(settings, prefs):
     return _queue('next', settings, prefs)
+
+
+def motion_init(settings, prefs, inputs):
+    return _queue('init', settings, prefs, init=inputs)
 
 
 def _artifact(record):
@@ -338,7 +359,7 @@ def import_reference(context, jobdir):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--ui-action', choices=('status', 'next'), required=True)
+    parser.add_argument('--ui-action', choices=('status', 'next', 'init'), required=True)
     parser.add_argument('--settings-json', required=True)
     parser.add_argument('--result-json', required=True)
     args = parser.parse_args()

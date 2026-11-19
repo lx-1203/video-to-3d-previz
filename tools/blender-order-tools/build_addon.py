@@ -11,6 +11,14 @@ FILES = (
     "orderflow/__init__.py", "orderflow/core.py", "orderflow/worker.py",
     "orderflow/media.py", "orderflow/ui.py", "orderflow/motion.py",
     "orderflow/palette.py", "orderflow/acceptance.py", "orderflow/camera.py", "README.md", "examples/palette.json",
+    "orderflow/multiactor.py", "orderflow/scene_tools.py", "orderflow/workflow_ui.py", "orderflow/local_pipeline.py",
+    "examples/auto-box-backend.json",
+    "orderflow/auto_box/references/joint_parents.json",
+    *(f"orderflow/auto_box/scripts/{name}.py" for name in (
+        "anchor_edit", "appearance_tracker", "build_candidate", "correct", "diff_anchors",
+        "fill_pose_gaps", "font_util", "multi_actor_detect_t4", "paths", "pose_patch",
+        "render_skeletons", "review_candidates", "run_shot",
+    )),
 )
 
 

@@ -106,9 +106,15 @@ def _run(config, script, *args):
     ffmpeg = config.get('ffmpeg')
     if ffmpeg:
         env['PATH'] = str(Path(ffmpeg).parent) + os.pathsep + env.get('PATH', '')
+        env['ORDERFLOW_FFMPEG_EXE'] = ffmpeg
     command = [_path(config, 'python'), '-u', str(AUTO_BOX / 'scripts' / f'{script}.py'), *map(str, args)]
     print('▶', script, flush=True)
-    subprocess.run(command, env=env, check=True, creationflags=getattr(subprocess, 'CREATE_NO_WINDOW', 0))
+    result = subprocess.run(command, env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True,
+                            encoding='utf-8', errors='replace', creationflags=getattr(subprocess, 'CREATE_NO_WINDOW', 0))
+    if result.stdout:
+        print(result.stdout, end='', flush=True)
+    if result.returncode:
+        raise RuntimeError(f'{script} 退出码 {result.returncode}，请查看 box.log。')
 
 
 def _attempt(folder, spec, records, stage, data, output):

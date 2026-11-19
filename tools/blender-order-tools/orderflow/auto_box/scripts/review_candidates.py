@@ -137,9 +137,9 @@ def render(rows, cands, video, out_dir, limit, scale=3.0):
         top = fr.get("pts") is not None
         png = os.path.join(out_dir, "src_%s_%04d.png" % (c["shot_id"], c["frame"]))
         if not os.path.exists(png):
-            subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", video,
+            subprocess.run([os.environ.get("ORDERFLOW_FFMPEG_EXE", "ffmpeg"), "-y", "-v", "error", "-i", video,
                             "-vf", "select='eq(n\\,%d)'" % c["frame"],
-                            "-vsync", "0", "-frames:v", "1", png], check=True)
+                            "-fps_mode", "passthrough", "-frames:v", "1", png], check=True)
         img = Image.open(png).convert("RGB")
         d = ImageDraw.Draw(img)
         for tid, b in boxes:

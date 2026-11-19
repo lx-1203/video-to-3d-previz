@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """Draw 2D skeletons from the pose result, marking interpolated frames."""
 import argparse
+import hashlib
 import json
 import os
 import subprocess
-import sys
 
 from PIL import Image, ImageDraw
 from font_util import load_font
@@ -19,18 +19,12 @@ except (OSError, KeyError):
 
 
 def color_for(actor):
-    if actor in COLORS:
-        return COLORS[actor]
-    index = abs(hash(actor)) % len(FALLBACK)
-    return FALLBACK[index]
+    index = int.from_bytes(hashlib.sha256(actor.encode('utf-8')).digest()[:4], 'big')
+    return FALLBACK[index % len(FALLBACK)]
 
 
 FALLBACK = [(255, 210, 90), (120, 220, 255), (255, 140, 200), (160, 255, 160),
             (220, 160, 255), (255, 255, 150), (150, 200, 255), (200, 255, 200)]
-
-COLORS = {"A_pink": (255, 120, 60), "B_scarf": (80, 160, 255),
-          "C_blonde": (80, 220, 120)}
-
 
 def project(joints, K):
     fx, fy, cx, cy = K[0][0], K[1][1], K[0][2], K[1][2]
@@ -62,8 +56,8 @@ def main():
     for f in [int(x) for x in args.frames.split(",")]:
         png = os.path.join(args.out, "src_%04d.png" % f)
         if not os.path.exists(png):
-            subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", args.source,
-                            "-vf", "select='eq(n\\,%d)'" % f, "-vsync", "0",
+            subprocess.run([os.environ.get("ORDERFLOW_FFMPEG_EXE", "ffmpeg"), "-y", "-v", "error", "-i", args.source,
+                            "-vf", "select='eq(n\\,%d)'" % f, "-fps_mode", "passthrough",
                             "-frames:v", "1", png], check=True)
         img = Image.open(png).convert("RGB")
         d = ImageDraw.Draw(img, "RGBA")

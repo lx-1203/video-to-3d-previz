@@ -25,6 +25,8 @@ description: Use when creating or revising 漫剧、短剧、导演分镜、Exce
 
 Excel分镜默认交付含图版。先复用并嵌入有效图片，再自动制作缺失且必要的首帧与参考图，导出后复查图文位置。按[Excel实图补齐与摆放](references/director.md#excel实图补齐与摆放)执行，明确仅交文字或限改局部时按用户范围。
 
+修订现有交付物时，默认在原路径和原文件名上更新，再打开原文件核对。用户明确要求另存或独立版本时才另交副本。详见[核心规则](references/core.md#共享范围与操作边界)。
+
 ## 按任务读取
 
 用 `python "<skill-dir>/scripts/read_modules.py" read <模块ID>` 读取，同脚本tree命令查ID；[索引](module-index.json)自动带入core、父节点和必要依赖。仅追加当前任务触发的专项；完整分镜保留必需设计与交付。

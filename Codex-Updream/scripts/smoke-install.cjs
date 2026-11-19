@@ -11,7 +11,12 @@ async function smoke(base,exe){
   const first=await install({installDir:target,codexHome:home,codexExe:exe||discoverCodex()});
   assert.equal(first.status,'installed');assert.equal(first.browserConnection,'not_checked');
   assert.equal(first.externalBrowserExtensionRequired,false);
-  for(const file of ['skills/updream/SKILL.md','.codex-plugin/plugin.json'])assert.deepEqual(fs.readFileSync(path.join(first.installedPath,file)),fs.readFileSync(path.join(__dirname,'../plugin',file)));
+  for(const file of [
+    'skills/updream/SKILL.md',
+    'skills/updream/references/webmcp.md',
+    'skills/updream/scripts/webmcp-read.mjs',
+    '.codex-plugin/plugin.json',
+  ])assert.deepEqual(fs.readFileSync(path.join(first.installedPath,file)),fs.readFileSync(path.join(__dirname,'../plugin',file)));
   const saved=fs.readFileSync(config,'utf8');assert.ok(saved.includes('model = "gpt-6"'));assert.ok(saved.includes('localeOverride = "zh-CN"'));assert.ok(saved.includes('command = "retained-bridge.exe"'));
   const second=await install({installDir:target,codexHome:home,codexExe:exe||discoverCodex()});
   assert.equal(second.version,first.version);assert.equal(fs.readFileSync(config,'utf8'),saved);

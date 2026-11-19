@@ -27,18 +27,22 @@ jobs:
           if (-not (Test-Path -LiteralPath $native)) { throw 'Official native Codex executable missing' }
           "UPDREAM_TEST_CODEX_EXE=$native" >> $env:GITHUB_ENV
       - name: Tests and release version
+        id: plugin
         shell: pwsh
         run: |
           node --test Codex-Updream/tests/*.test.cjs
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           $version = (Get-Content Codex-Updream/plugin/.codex-plugin/plugin.json -Raw | ConvertFrom-Json).version
           if ($env:GITHUB_REF -like 'refs/tags/*' -and $env:GITHUB_REF_NAME -ne "updream-codex-v$version") { throw 'Tag and plugin version differ' }
+          "version=$version" >> $env:GITHUB_OUTPUT
       - name: Build and verify actual offline ZIP
         shell: pwsh
+        env:
+          PLUGIN_VERSION: ${{ steps.plugin.outputs.version }}
         run: |
           python Codex-Updream/scripts/package-windows.py
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          python Codex-Updream/scripts/verify-package.py Codex-Updream/artifacts/updream-codex-0.3.2-windows-x64.zip --codex-exe "$env:UPDREAM_TEST_CODEX_EXE"
+          python Codex-Updream/scripts/verify-package.py "Codex-Updream/artifacts/updream-codex-$env:PLUGIN_VERSION-windows-x64.zip" --codex-exe "$env:UPDREAM_TEST_CODEX_EXE"
       - uses: actions/upload-artifact@v4
         with:
           name: updream-codex-installer
@@ -49,5 +53,6 @@ jobs:
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
+          PLUGIN_VERSION: ${{ steps.plugin.outputs.version }}
         run: |
-          gh release create $env:GITHUB_REF_NAME artifacts/*.zip artifacts/SHA256SUMS.txt artifacts/build-receipt.json --title "Updream for Codex 0.3.2 - Automatic installer" --notes-file RELEASE.md --verify-tag --latest=false
+          gh release create $env:GITHUB_REF_NAME "artifacts/updream-codex-$env:PLUGIN_VERSION-windows-x64.zip" artifacts/SHA256SUMS.txt artifacts/build-receipt.json --title "Updream for Codex $env:PLUGIN_VERSION - Automatic installer" --notes-file RELEASE.md --verify-tag --latest=false

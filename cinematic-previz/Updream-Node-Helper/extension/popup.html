@@ -1,0 +1,12 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Updream MCP Bridge</title><link rel="stylesheet" href="popup.css"></head>
+<body>
+  <p class="eyebrow">UPDREAM / MCP BRIDGE · 0.3.1</p><h1>把节点接口交给 Codex。</h1>
+  <p id="popup-status" role="status">正在检查本机连接…</p>
+  <p id="page-status" class="hint" role="status">正在读取当前画布接口…</p>
+  <label for="pair-file">双击安装包会自动配对；手动安装可导入 connection.json</label><input id="pair-file" type="file" accept=".json,application/json">
+  <button id="check-connection">检查连接</button>
+  <button id="enable-page">启用当前画布并刷新</button>
+  <button id="disable-page">停用当前画布并刷新</button>
+  <p class="hint">配对一次后，Codex 直接调用 MCP 工具。首次安装需刷新 updream，再启用画布。生成确认仍在网站中处理。</p>
+  <script src="popup.js"></script>
+</body></html>

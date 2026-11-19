@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>星迹 · Skill 观察台</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <a href="#main" class="skip-link">跳到主要内容</a>
+  <div class="shell">
+    <aside class="sidebar">
+      <a class="brand" href="#overview" aria-label="星迹 Skill 观察台首页"><span class="brand-mark">迹</span><span><strong>星迹</strong><small>SKILL OBSERVATORY</small></span></a>
+      <div class="side-caption">规则的状态与路径</div>
+      <nav aria-label="主要导航" id="navigation">
+        <button class="nav-item active" data-view="overview" aria-current="page"><span class="nav-glyph">01</span>状态总览</button>
+        <button class="nav-item" data-view="routes"><span class="nav-glyph">02</span>读取路径</button>
+        <button class="nav-item" data-view="updates"><span class="nav-glyph">03</span>更新记录</button>
+        <button class="nav-item" data-view="files"><span class="nav-glyph">04</span>规则文件</button>
+      </nav>
+      <div class="side-foot"><span class="live-dot"></span>本机文件 · 实时读取<p>展示规则和读取器的解析结果。<br>不记录 AI 的历史阅读过程。</p><span id="side-version">正在连接…</span></div>
+    </aside>
+    <main id="main" tabindex="-1">
+      <header class="topbar">
+        <div class="breadcrumb">工作台 <span>/</span> <strong id="breadcrumb-current">状态总览</strong></div>
+        <div class="top-actions"><span id="local-badge" class="badge muted">正在读取本机</span><button id="refresh-button" class="button subtle" type="button">刷新状态 <span aria-hidden="true">↻</span></button></div>
+      </header>
+      <div id="error-banner" class="banner error" role="alert" hidden></div>
+      <div class="page-title"><div><div class="eyebrow">CINEMATIC PREVIZ / LIVE RULES</div><h1 id="page-heading">技能运行总览</h1><p id="page-description">看清当前规则的版本、更新和阅读入口。</p></div><div class="checked"><span class="live-dot"></span><span id="checked-time">正在读取…</span><small>每 15 秒重新检查本机文件</small></div></div>
+      <section id="view-overview" class="view" aria-labelledby="page-heading"><div class="loading">正在读取当前 skill…</div></section>
+      <section id="view-routes" class="view" hidden aria-labelledby="page-heading"></section>
+      <section id="view-updates" class="view" hidden aria-labelledby="page-heading"></section>
+      <section id="view-files" class="view" hidden aria-labelledby="page-heading"></section>
+      <footer class="page-footer"><span>Skill 观察台</span><span>实际文件是规则来源，版本号不单独代表内容最新。</span></footer>
+    </main>
+  </div>
+  <dialog id="document-dialog" aria-labelledby="document-title">
+    <div class="document-header"><div class="document-title-wrap"><span class="eyebrow" id="document-type">规则文件</span><h2 id="document-title">文档</h2><p id="document-path"></p></div><button id="close-document" class="button subtle" aria-label="关闭文档">关闭 <span aria-hidden="true">×</span></button></div>
+    <div id="document-meta" class="document-meta"></div>
+    <div class="document-toolbar"><div class="segmented" aria-label="文档显示方式"><button id="preview-mode" class="selected" aria-pressed="true">阅读视图</button><button id="source-mode" aria-pressed="false">原文</button></div><div class="document-find"><label for="document-search" class="sr-only">在文档中查找</label><input id="document-search" type="search" placeholder="查找文档内容"><button id="find-next" class="button subtle">查找</button><span id="find-count" aria-live="polite"></span></div><button id="full-document" class="button subtle" hidden>查看完整文件</button></div>
+    <div id="document-content" class="document-content markdown" tabindex="0"></div>
+  </dialog>
+  <div id="toast" class="toast" role="status" hidden></div>
+</body>
+</html>

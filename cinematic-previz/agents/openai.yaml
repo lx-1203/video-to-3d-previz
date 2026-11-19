@@ -1,0 +1,4 @@
+interface:
+  display_name: "星迹的AIGC"
+  short_description: "导演分镜、首帧与视频接力，支持 Updream、即梦官方CLI与多工作区协作"
+  default_prompt: "使用 $cinematic-previz（星迹的AIGC）完成我的分镜或视频任务；确认当前独立或已注册同步模式，按可用工具执行并核对结果。"

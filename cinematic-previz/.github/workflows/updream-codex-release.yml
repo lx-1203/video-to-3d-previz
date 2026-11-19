@@ -1,0 +1,58 @@
+name: Release Updream for Codex
+on:
+  push:
+    tags: ['updream-codex-v*']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  codex-installer:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.18.0'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install pinned official Codex CLI for isolated tests
+        shell: pwsh
+        run: |
+          npm install --global @openai/codex@0.167.0 --ignore-scripts --registry=https://registry.npmjs.org
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $root = npm root -g
+          $native = Join-Path $root '@openai/codex/node_modules/@openai/codex-win32-x64/vendor/x86_64-pc-windows-msvc/bin/codex.exe'
+          if (-not (Test-Path -LiteralPath $native)) { throw 'Official native Codex executable missing' }
+          "UPDREAM_TEST_CODEX_EXE=$native" >> $env:GITHUB_ENV
+      - name: Tests and release version
+        id: plugin
+        shell: pwsh
+        run: |
+          node --test Codex-Updream/tests/*.test.cjs
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $version = (Get-Content Codex-Updream/plugin/.codex-plugin/plugin.json -Raw | ConvertFrom-Json).version
+          if ($env:GITHUB_REF -like 'refs/tags/*' -and $env:GITHUB_REF_NAME -ne "updream-codex-v$version") { throw 'Tag and plugin version differ' }
+          "version=$version" >> $env:GITHUB_OUTPUT
+      - name: Build and verify actual offline ZIP
+        shell: pwsh
+        env:
+          PLUGIN_VERSION: ${{ steps.plugin.outputs.version }}
+        run: |
+          python Codex-Updream/scripts/package-windows.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python Codex-Updream/scripts/verify-package.py "Codex-Updream/artifacts/updream-codex-$env:PLUGIN_VERSION-windows-x64.zip" --codex-exe "$env:UPDREAM_TEST_CODEX_EXE"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: updream-codex-installer
+          path: Codex-Updream/artifacts/*
+      - name: Publish Codex installer assets
+        if: startsWith(github.ref, 'refs/tags/')
+        working-directory: Codex-Updream
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PLUGIN_VERSION: ${{ steps.plugin.outputs.version }}
+        run: |
+          gh release create $env:GITHUB_REF_NAME "artifacts/updream-codex-$env:PLUGIN_VERSION-windows-x64.zip" artifacts/SHA256SUMS.txt artifacts/build-receipt.json --title "Updream for Codex $env:PLUGIN_VERSION - Automatic installer" --notes-file RELEASE.md --verify-tag --latest=false

@@ -1,0 +1,12 @@
+{
+  "name": "xingji-updream",
+  "interface": { "displayName": "星迹 · Updream Codex" },
+  "plugins": [
+    {
+      "name": "updream-codex",
+      "source": { "source": "local", "path": "./Codex-Updream/plugin" },
+      "policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+      "category": "Productivity"
+    }
+  ]
+}

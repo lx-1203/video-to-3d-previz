@@ -1,0 +1,50 @@
+name: Release Updream Windows installer
+on:
+  push:
+    tags: ['updream-bridge-v*']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  windows-installer:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: Updream-Node-Helper
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.18.0'
+          cache: npm
+          cache-dependency-path: Updream-Node-Helper/package-lock.json
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install pinned dependencies
+        run: npm ci --omit=dev --ignore-scripts
+      - name: Match tag and Bridge version
+        run: |
+          $version = (Get-Content package.json -Raw | ConvertFrom-Json).version
+          if ($env:GITHUB_REF -like 'refs/tags/*' -and $env:GITHUB_REF_NAME -ne "updream-bridge-v$version") { throw 'Tag does not match Bridge version' }
+      - name: Tests and extension scope
+        run: |
+          node --test tests/*.test.cjs
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          node scripts/check.cjs
+      - name: Build offline ZIP
+        run: python scripts/package-windows.py
+      - name: Verify actual offline installer
+        run: python scripts/verify-windows-package.py artifacts/updream-mcp-bridge-0.3.1-windows-x64.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: updream-windows-installer
+          path: Updream-Node-Helper/artifacts/*
+      - name: Publish versioned assets
+        if: startsWith(github.ref, 'refs/tags/')
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create $env:GITHUB_REF_NAME artifacts/*.zip artifacts/SHA256SUMS.txt artifacts/build-receipt.json --title "Updream MCP Bridge 0.3.1 - Windows installer" --notes-file RELEASE.md --verify-tag --latest=false

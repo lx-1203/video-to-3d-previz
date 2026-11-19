@@ -1,0 +1,16 @@
+{
+  "name": "updream-codex",
+  "version": "0.3.6",
+  "description": "Use Updream in the Codex built-in browser without a separately loaded browser extension.",
+  "author": { "name": "星迹" },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Updream for Codex",
+    "shortDescription": "在 Codex 中连接 Updream，优先使用网站原生工具",
+    "longDescription": "通过 Codex 内置浏览器的公开能力操作 Updream；优先使用页面实际提供的 Site tools/WebMCP。无需 Edge 开发人员模式、文件夹加载、JSON 配对或额外本机服务。网站登录、浏览器权限和当前页面可用性仍须满足。",
+    "developerName": "星迹",
+    "category": "Productivity",
+    "capabilities": ["Read", "Write"],
+    "defaultPrompt": "使用 Updream Codex 插件，检查当前画布的连接和可用工具，只读检查。"
+  }
+}

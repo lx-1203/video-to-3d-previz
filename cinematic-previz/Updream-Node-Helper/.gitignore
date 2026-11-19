@@ -1,0 +1,7 @@
+node_modules/
+.local/
+artifacts/
+.runtime-cache/
+__pycache__/
+*.pyc
+pairing.local.json

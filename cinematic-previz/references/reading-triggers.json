@@ -1,0 +1,73 @@
+{
+  "version": 1,
+  "tasks": {
+    "storyboard": {
+      "when": "要制作或修改 Excel 分镜时",
+      "action": "先核算朗读，再排15秒大段，完成分镜与提示词检查。",
+      "gate": "新项目的文档剧本已通过；已有同版审核直接沿用。",
+      "source": "references/director.md"
+    },
+    "prompt": {
+      "when": "只写或修改生成提示词时",
+      "action": "按分层正文写清画面、动作、引用与声音。",
+      "gate": "实际生成须使用已审 Excel 中的同版词；只写草稿不启动生成。",
+      "source": "references/prompts.md"
+    },
+    "frame": {
+      "when": "要制作人物资产或镜头首帧时",
+      "action": "核对人物阶段、表情、物品与本镜构图。",
+      "gate": "进入制作前沿用已审剧本/分镜；参考或推演授权按实际缺项核对。",
+      "source": "references/first-frame-previz.md"
+    },
+    "video": {
+      "when": "要生成视频时",
+      "action": "读取生成规范，核对表内词、附件与工具能力。",
+      "gate": "含图 Excel 已通过；执行前核对已有预算、授权和实际能力。",
+      "source": "references/generation.md"
+    },
+    "classroom": {
+      "when": "要查课堂写法或镜头索引时",
+      "action": "按当前剧情选方法；课件示例按条件采用。",
+      "gate": "查询本身不启动制作，沿用朗读优先与15秒分包。",
+      "source": "references/classroom-storyboard.md"
+    },
+    "camera": {
+      "when": "只查一个具体运镜方法时",
+      "action": "以移焦为例，仅读取公共约束和对应方法。",
+      "gate": "确认景别、空间与焦点变化可行；查询不代表已生成或验收。",
+      "source": "references/camera-language.md"
+    },
+    "maintenance": {
+      "when": "要修改或排查 skill 时",
+      "action": "检查来源与改动范围，验证后同步安装。",
+      "gate": "保留已有修改；沿用发布授权完成精确备份，不强推。",
+      "source": "references/maintenance-release.md"
+    }
+  },
+  "conditions": [
+    {
+      "id": "focus",
+      "title": "需要移焦镜头",
+      "when": "镜内注意力要从一个对象转到另一距离层时",
+      "tasks": ["storyboard", "prompt", "frame", "video"],
+      "modules": ["camera.focus"],
+      "source": "references/camera-language.md"
+    },
+    {
+      "id": "handoff",
+      "title": "需要接上一段视频",
+      "when": "实际任务之间需要续接动作或换机位时",
+      "tasks": ["storyboard", "prompt", "frame", "video"],
+      "modules": ["handoff"],
+      "source": "references/frame-handoff.md"
+    },
+    {
+      "id": "libtv",
+      "title": "需要操作 LibTV",
+      "when": "本次确实要在 LibTV 中处理素材或画布时",
+      "tasks": ["storyboard", "prompt", "frame", "video"],
+      "modules": ["platform.libtv"],
+      "source": "references/libtv-mcp.md"
+    }
+  ]
+}

@@ -1,0 +1,826 @@
+{
+  "version": 1,
+  "root": "aigc",
+  "required": [
+    "core"
+  ],
+  "nodes": [
+    {
+      "id": "aigc",
+      "title": "星迹的AIGC",
+      "parent": null
+    },
+    {
+      "id": "core",
+      "title": "共享原稿、边界与状态规则",
+      "parent": "aigc",
+      "source": {
+        "path": "references/core.md"
+      }
+    },
+    {
+      "id": "direction",
+      "title": "导演与视听设计",
+      "parent": "aigc"
+    },
+    {
+      "id": "style",
+      "title": "风格、情绪、色调与配色",
+      "parent": "direction",
+      "source": {
+        "path": "references/visual-style.md"
+      }
+    },
+    {
+      "id": "camera",
+      "title": "摄影公共规则与多通道约束",
+      "parent": "direction",
+      "source": {
+        "path": "references/camera-language.md",
+        "sections": [
+          "## 使用方式与控制分层",
+          "## 每镜必须落到的字段",
+          "## 空间可行性：先确认机位放得下",
+          "## 联合质检与失败回退"
+        ]
+      }
+    },
+    {
+      "id": "camera.classroom",
+      "title": "课堂六类情境与60项镜头索引",
+      "parent": "camera",
+      "source": {
+        "path": "references/classroom-storyboard.md"
+      }
+    },
+    {
+      "id": "camera.whip",
+      "title": "M01｜甩镜",
+      "parent": "camera",
+      "source": {
+        "path": "references/camera-language.md",
+        "sections": [
+          "## M01｜甩镜"
+        ]
+      }
+    },
+    {
+      "id": "camera.pov",
+      "title": "M02｜主观移动",
+      "parent": "camera",
+      "source": {
+        "path": "references/camera-language.md",
+        "sections": [
+          "## M02｜主观移动"
+        ]
+      }
+    },
+    {
+      "id": "camera.orbit",
+      "title": "M03｜360°环绕",
+      "parent": "camera",
+      "source": {
+        "path": "references/camera-language.md",
+        "sections": [
+          "## M03｜360°环绕"
+        ]
+      }
+    },
+    {
+      "id": "camera.focus",
+      "title": "M04｜焦点转移",
+      "parent": "camera",
+      "source": {
+        "path": "references/camera-language.md",
+        "sections": [
+          "## M04｜焦点转移"
+        ]
+      }
+    },
+    {
+      "id": "camera.push-speed",
+      "title": "M05｜变速推进",
+      "parent": "camera",
+      "source": {
+        "path": "references/camera-language.md",
+        "sections": [
+          "## M05｜变速推进"
+        ]
+      }
+    },
+    {
+      "id": "camera.reveal",
+      "title": "M06｜细节到全景",
+      "parent": "camera",
+      "source": {
+        "path": "references/camera-language.md",
+        "sections": [
+          "## M06｜细节到全景"
+        ]
+      }
+    },
+    {
+      "id": "camera.rise-orbit",
+      "title": "M07｜上升环绕",
+      "parent": "camera",
+      "source": {
+        "path": "references/camera-language.md",
+        "sections": [
+          "## M07｜上升环绕"
+        ]
+      }
+    },
+    {
+      "id": "camera.wipe",
+      "title": "M08｜前景擦过",
+      "parent": "camera",
+      "source": {
+        "path": "references/camera-language.md",
+        "sections": [
+          "## M08｜前景擦过"
+        ]
+      }
+    },
+    {
+      "id": "camera.slow",
+      "title": "M09｜慢镜头",
+      "parent": "camera",
+      "source": {
+        "path": "references/camera-language.md",
+        "sections": [
+          "## M09｜慢镜头"
+        ]
+      }
+    },
+    {
+      "id": "camera.ramp",
+      "title": "M10｜速度坡度／变速",
+      "parent": "camera",
+      "source": {
+        "path": "references/camera-language.md",
+        "sections": [
+          "## M10｜速度坡度／变速"
+        ]
+      }
+    },
+    {
+      "id": "camera.dolly-zoom",
+      "title": "M11｜滑动变焦",
+      "parent": "camera",
+      "source": {
+        "path": "references/camera-language.md",
+        "sections": [
+          "## M11｜滑动变焦"
+        ]
+      }
+    },
+    {
+      "id": "camera.parallax",
+      "title": "M12｜横移视差",
+      "parent": "camera",
+      "source": {
+        "path": "references/camera-language.md",
+        "sections": [
+          "## M12｜横移视差"
+        ]
+      }
+    },
+    {
+      "id": "camera.follow",
+      "title": "M13｜跟拍／领拍／侧跟",
+      "parent": "camera",
+      "source": {
+        "path": "references/camera-language.md",
+        "sections": [
+          "## M13｜跟拍／领拍／侧跟"
+        ]
+      }
+    },
+    {
+      "id": "camera.crane",
+      "title": "M14｜升降揭示／俯瞰",
+      "parent": "camera",
+      "source": {
+        "path": "references/camera-language.md",
+        "sections": [
+          "## M14｜升降揭示／俯瞰"
+        ]
+      }
+    },
+    {
+      "id": "camera.roll",
+      "title": "M15｜滚转／旋转地平线",
+      "parent": "camera",
+      "source": {
+        "path": "references/camera-language.md",
+        "sections": [
+          "## M15｜滚转／旋转地平线"
+        ]
+      }
+    },
+    {
+      "id": "camera.zoom",
+      "title": "M16｜光学变焦／急变焦",
+      "parent": "camera",
+      "source": {
+        "path": "references/camera-language.md",
+        "sections": [
+          "## M16｜光学变焦／急变焦"
+        ]
+      }
+    },
+    {
+      "id": "camera.example",
+      "title": "复合镜头的完整表格与提示词示范",
+      "parent": "camera",
+      "source": {
+        "path": "references/camera-language.md",
+        "sections": [
+          "## 复合镜头的完整入表示范｜CX010／规划v1"
+        ]
+      }
+    },
+    {
+      "id": "transitions",
+      "title": "转场公共编译、切点与验收",
+      "parent": "direction",
+      "source": {
+        "path": "references/transitions.md",
+        "sections": [
+          "## 从剧情编译，不按效果名称自动提交",
+          "## 输入、编译与交付字段",
+          "## 转场改版与逐项落实",
+          "## 关键帧、依赖与失败回退"
+        ]
+      }
+    },
+    {
+      "id": "transitions.action",
+      "title": "T01｜相似动作转场",
+      "parent": "transitions",
+      "source": {
+        "path": "references/transitions.md",
+        "sections": [
+          "## T01｜相似动作转场"
+        ]
+      }
+    },
+    {
+      "id": "transitions.occlusion",
+      "title": "T02｜前景遮挡转场",
+      "parent": "transitions",
+      "source": {
+        "path": "references/transitions.md",
+        "sections": [
+          "## T02｜前景遮挡转场"
+        ]
+      },
+      "requires": [
+        "camera.wipe"
+      ]
+    },
+    {
+      "id": "transitions.shape",
+      "title": "T03｜形状匹配转场",
+      "parent": "transitions",
+      "source": {
+        "path": "references/transitions.md",
+        "sections": [
+          "## T03｜形状匹配转场"
+        ]
+      }
+    },
+    {
+      "id": "transitions.whip",
+      "title": "T04｜运动模糊／甩镜转场",
+      "parent": "transitions",
+      "source": {
+        "path": "references/transitions.md",
+        "sections": [
+          "## T04｜运动模糊／甩镜转场"
+        ]
+      },
+      "requires": [
+        "camera.whip"
+      ]
+    },
+    {
+      "id": "transitions.white",
+      "title": "T05｜闪白转场",
+      "parent": "transitions",
+      "source": {
+        "path": "references/transitions.md",
+        "sections": [
+          "## T05｜闪白转场"
+        ]
+      }
+    },
+    {
+      "id": "transitions.screen",
+      "title": "T06｜屏幕拉远／画中空间揭示",
+      "parent": "transitions",
+      "source": {
+        "path": "references/transitions.md",
+        "sections": [
+          "## T06｜屏幕拉远／画中空间揭示"
+        ]
+      },
+      "requires": [
+        "camera.reveal"
+      ]
+    },
+    {
+      "id": "lighting",
+      "title": "打光、光向与明暗层次",
+      "parent": "direction",
+      "source": {
+        "path": "references/lighting.md"
+      }
+    },
+    {
+      "id": "performance",
+      "title": "表演与语音提示词编译",
+      "parent": "direction",
+      "source": {
+        "path": "references/performance-compiler.md"
+      },
+      "requires": [
+        "timing",
+        "sound"
+      ]
+    },
+    {
+      "id": "storyboard",
+      "title": "完整专业分镜及全部交付分支",
+      "parent": "direction",
+      "summary": "完整脚本必选；专业分支合流到核心主表，保留完整视频词、最终参考节点和必要附表",
+      "source": {
+        "path": "references/director.md"
+      },
+      "requires": [
+        "style",
+        "camera",
+        "lighting",
+        "performance",
+        "previs.start",
+        "prompts",
+        "continuity",
+        "delivery",
+        "transitions",
+        "stages",
+        "timing",
+        "sound"
+      ]
+    },
+    {
+      "id": "production",
+      "title": "制作、验证与交付",
+      "parent": "aigc"
+    },
+    {
+      "id": "workflow",
+      "title": "完整影片制作工作流",
+      "parent": "production",
+      "source": {
+        "path": "references/workflow.md",
+        "sections": [
+          "## 按任务规模执行这条链"
+        ]
+      },
+      "requires": [
+        "storyboard",
+        "records",
+        "generation",
+        "handoff",
+        "budget",
+        "runtime",
+        "stages",
+        "timing",
+        "sound"
+      ]
+    },
+    {
+      "id": "records",
+      "title": "版本、素材与项目状态记录",
+      "parent": "production",
+      "source": {
+        "path": "references/production-contract.md"
+      }
+    },
+    {
+      "id": "organization",
+      "title": "项目目录整理、素材追溯与回收恢复",
+      "parent": "production",
+      "requires": [
+        "records"
+      ],
+      "source": {
+        "path": "references/project-organization.md"
+      }
+    },
+    {
+      "id": "previs",
+      "title": "预演分支",
+      "parent": "production"
+    },
+    {
+      "id": "previs.start",
+      "title": "逐镜Codex生图白模首帧",
+      "parent": "previs",
+      "source": {
+        "path": "references/first-frame-previz.md"
+      },
+      "requires": [
+        "character-assets",
+        "performance",
+        "expression-assets",
+        "execution",
+        "prop-assets",
+        "scene-assets",
+        "stages"
+      ]
+    },
+    {
+      "id": "previs.3d",
+      "title": "精确空间与动态三维预演",
+      "parent": "previs",
+      "source": {
+        "path": "references/blender.md"
+      }
+    },
+    {
+      "id": "prompts",
+      "title": "每镜完整提示词及适配规则",
+      "parent": "production",
+      "source": {
+        "path": "references/prompts.md"
+      },
+      "requires": [
+        "stages",
+        "timing",
+        "sound"
+      ]
+    },
+    {
+      "id": "character-assets",
+      "title": "人物资产双参考五视图、收图与审图",
+      "parent": "production",
+      "source": {
+        "path": "references/character-assets.md"
+      }
+    },
+    {
+      "id": "expression-assets",
+      "title": "同人物阶段标准九宫格表情合集",
+      "parent": "production",
+      "source": {
+        "path": "references/expression-assets.md"
+      },
+      "requires": [
+        "character-assets",
+        "performance"
+      ]
+    },
+    {
+      "id": "prop-assets",
+      "title": "强参考物品独立图与读向审查",
+      "parent": "production",
+      "source": {
+        "path": "references/prop-assets.md"
+      }
+    },
+    {
+      "id": "execution",
+      "title": "人物表情附件与转场执行证据检查",
+      "parent": "production",
+      "source": {
+        "path": "references/execution-checks.md"
+      }
+    },
+    {
+      "id": "generation",
+      "title": "模型能力、输入、生成与检查",
+      "parent": "production",
+      "source": {
+        "path": "references/generation.md",
+        "sections": [
+          "## 资产缺口自动补齐",
+          "## 生图输入的职责",
+          "## 先探测视频能力",
+          "## 路线选择",
+          "## 高级镜头语言的能力适配",
+          "## 转场的生成与剪辑分工",
+          "## 检查、修复和交付"
+        ]
+      },
+      "requires": [
+        "prompts",
+        "budget",
+        "character-assets",
+        "expression-assets",
+        "prop-assets",
+        "scene-assets",
+        "transitions",
+        "execution"
+      ]
+    },
+    {
+      "id": "generation.text",
+      "title": "大量画面文字的中间关键帧",
+      "parent": "generation",
+      "source": {
+        "path": "references/generation.md",
+        "sections": [
+          "## 大量画面文字：先做中间关键帧"
+        ]
+      }
+    },
+    {
+      "id": "scene-assets",
+      "title": "场地一致性与多机位场景参考",
+      "parent": "production",
+      "source": {
+        "path": "references/scene-assets.md"
+      }
+    },
+    {
+      "id": "handoff",
+      "title": "真实尾帧与镜头接力",
+      "parent": "production",
+      "source": {
+        "path": "references/frame-handoff.md"
+      },
+      "requires": [
+        "continuity",
+        "scene-assets"
+      ]
+    },
+    {
+      "id": "continuity",
+      "title": "原文、身份、动作及音画连续性",
+      "parent": "production",
+      "source": {
+        "path": "references/ai-video-continuity.md"
+      },
+      "requires": [
+        "timing",
+        "sound"
+      ]
+    },
+    {
+      "id": "budget",
+      "title": "预算核算与付费授权",
+      "parent": "production",
+      "source": {
+        "path": "references/workflow.md",
+        "sections": [
+          "## 视频项目预算"
+        ]
+      }
+    },
+    {
+      "id": "delivery",
+      "title": "逐镜全维度合流与交付检查",
+      "parent": "production",
+      "source": {
+        "path": "references/workflow.md",
+        "sections": [
+          "## 逐镜提示词直接展示",
+          "## 交付前检查",
+          "## 逐镜交付逐项核对"
+        ]
+      },
+      "requires": [
+        "execution"
+      ]
+    },
+    {
+      "id": "policy",
+      "title": "政策科普与原文覆盖",
+      "parent": "production",
+      "source": {
+        "path": "references/policy-explainer.md"
+      }
+    },
+    {
+      "id": "runtime",
+      "title": "同步、经验回写与本地工具",
+      "parent": "production",
+      "source": {
+        "path": "references/workflow.md",
+        "sections": [
+          "## 每次调用前：确认独立模式或项目同步模式",
+          "## 制作经验主动回写",
+          "## 内置本地工具"
+        ]
+      }
+    },
+    {
+      "id": "platform",
+      "title": "平台连接与节点操作",
+      "parent": "aigc"
+    },
+    {
+      "id": "platform.jimeng",
+      "title": "即梦页面、画布与协作",
+      "parent": "platform",
+      "source": {
+        "path": "references/jimeng-mcp.md"
+      }
+    },
+    {
+      "id": "platform.libtv",
+      "title": "LibTV官方Remote MCP与素材复用",
+      "parent": "platform",
+      "source": {
+        "path": "references/libtv-mcp.md"
+      }
+    },
+    {
+      "id": "platform.updream",
+      "title": "Updream工作区与操作基础",
+      "parent": "platform",
+      "source": {
+        "path": "references/updream-mcp.md"
+      }
+    },
+    {
+      "id": "platform.layout",
+      "title": "Updream节点分区排版、范围保护与读回验收",
+      "parent": "platform.updream",
+      "source": {
+        "path": "references/updream-layout.md"
+      }
+    },
+    {
+      "id": "platform.upload",
+      "title": "素材上传与复用",
+      "parent": "platform.updream",
+      "source": {
+        "path": "references/updream-upload.md"
+      }
+    },
+    {
+      "id": "platform.maintenance",
+      "title": "接入维护与故障处理",
+      "parent": "platform.updream",
+      "source": {
+        "path": "references/updream-maintenance.md"
+      }
+    },
+    {
+      "id": "platform.feedback",
+      "title": "GitHub插件缺口反馈",
+      "parent": "platform.updream",
+      "source": {
+        "path": "references/github-feedback.md"
+      }
+    },
+    {
+      "id": "platform.tools",
+      "title": "完整工具参数目录",
+      "parent": "platform.updream",
+      "source": {
+        "path": "references/updream-tools.md"
+      }
+    },
+    {
+      "id": "platform.examples",
+      "title": "接口参数示例数据",
+      "parent": "platform.updream",
+      "source": {
+        "path": "references/updream-examples.json"
+      }
+    },
+    {
+      "id": "platform.ui",
+      "title": "虚拟角色及网站补充",
+      "parent": "platform.updream",
+      "source": {
+        "path": "references/updream-ui.md"
+      }
+    },
+    {
+      "id": "platform.prompts",
+      "title": "初始化及交接提示词",
+      "parent": "platform.updream",
+      "source": {
+        "path": "references/updream-prompts.md"
+      }
+    },
+    {
+      "id": "platform.preflight",
+      "title": "生成前平台预检",
+      "parent": "platform.updream",
+      "source": {
+        "path": "references/updream-preflight.md"
+      }
+    },
+    {
+      "id": "platform.efficiency",
+      "title": "平台调用效率",
+      "parent": "platform.updream",
+      "source": {
+        "path": "references/updream-efficiency.md"
+      }
+    },
+    {
+      "id": "resources",
+      "title": "示例、说明与许可",
+      "parent": "aigc"
+    },
+    {
+      "id": "resources.storyboard",
+      "title": "完整四镜分镜示例",
+      "parent": "resources",
+      "source": {
+        "path": "references/storyboard-example.md"
+      }
+    },
+    {
+      "id": "resources.performance",
+      "title": "表演包JSON示例",
+      "parent": "resources",
+      "source": {
+        "path": "references/performance-example.json"
+      }
+    },
+    {
+      "id": "resources.sources",
+      "title": "来源与适用边界",
+      "parent": "resources",
+      "source": {
+        "path": "references/sources.md"
+      }
+    },
+    {
+      "id": "resources.licenses",
+      "title": "上游许可",
+      "parent": "resources",
+      "source": {
+        "path": "references/upstream-licenses.txt"
+      }
+    },
+    {
+      "id": "stages",
+      "title": "制作阶段与用户审核",
+      "parent": "production",
+      "source": {
+        "path": "references/workflow.md",
+        "sections": [
+          "## 制作阶段与审核顺序"
+        ]
+      }
+    },
+    {
+      "id": "timing",
+      "title": "朗读核算、15秒大段与完整句",
+      "parent": "production",
+      "source": {
+        "path": "references/timing.md"
+      }
+    },
+    {
+      "id": "sound",
+      "title": "声音设计、音乐策略与人声职责",
+      "parent": "direction",
+      "source": {
+        "path": "references/sound.md"
+      }
+    }
+  ],
+  "rule_sources": {
+    "duration": {
+      "module": "timing",
+      "section": "## 先核算朗读再排15秒大段"
+    },
+    "sentence": {
+      "module": "timing",
+      "section": "## 完整句与发声单元"
+    },
+    "sound": {
+      "module": "sound",
+      "section": "## 声音组成与音乐策略"
+    },
+    "approval": {
+      "module": "stages",
+      "section": "## 制作阶段与审核顺序"
+    },
+    "prompt_execution": {
+      "module": "prompts",
+      "section": "## 视频提示词以已审核Excel为唯一执行来源"
+    },
+    "handoff": {
+      "module": "handoff",
+      "section": "## 交接源的真实性"
+    },
+    "budget": {
+      "module": "budget",
+      "section": "## 视频项目预算"
+    },
+    "delivery": {
+      "module": "storyboard",
+      "section": "## 默认交付专业分镜表"
+    }
+  }
+}

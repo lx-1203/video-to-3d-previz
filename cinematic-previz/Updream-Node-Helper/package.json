@@ -1,0 +1,21 @@
+{
+  "name": "updream-node-helper",
+  "version": "0.3.1",
+  "private": true,
+  "scripts": {
+    "test": "node --test tests/*.test.cjs",
+    "setup": "node scripts/setup.cjs",
+    "start": "node server/main.cjs",
+    "tools": "node scripts/generate-tools.cjs",
+    "check": "node scripts/check.cjs",
+    "diagnose": "node scripts/diagnose.cjs",
+    "package": "python scripts/package-windows.py",
+    "package:windows": "python scripts/package-windows.py"
+  },
+  "dependencies": {
+    "@iarna/toml": "2.2.5",
+    "@modelcontextprotocol/sdk": "1.32.1",
+    "ws": "8.22.0",
+    "zod": "4.6.7"
+  }
+}

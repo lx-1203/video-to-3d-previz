@@ -1,0 +1,13 @@
+* { box-sizing:border-box; }
+body { margin:0; padding:22px; width:316px; background:#191c25; color:#e9eaf0; font:13px/1.7 "Segoe UI","Microsoft YaHei",sans-serif; }
+.eyebrow { font-size:9px; letter-spacing:1.3px; color:#a7baff; margin:0; }
+h1 { font-size:19px; line-height:1.55; margin:7px 0 14px; }
+p { color:#bcc5dd; }
+button { display:block; width:100%; margin-top:9px; padding:11px; border:0; border-radius:7px; background:#a7baff; color:#171e33; font:600 12px "Microsoft YaHei",sans-serif; cursor:pointer; }
+button:disabled { opacity:.45; cursor:default; }
+button:focus-visible { outline:2px solid white; outline-offset:2px; }
+#check-connection,#disable-page { background:#30384e; color:#d4def7; }
+label { display:block; font-size:11px; color:#bcc5dd; }
+input { width:100%; margin:8px 0; font-size:11px; color:#bcc5dd; }
+.hint { font-size:11px; color:#9da9c7; margin-bottom:0; }
+[hidden] { display:none !important; }

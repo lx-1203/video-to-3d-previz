@@ -1,0 +1,185 @@
+{
+  "schema_version": 1,
+  "source": {
+    "intent": "女儿双手握住躺在病床上虚弱的妈妈，笑着说，妈，现在换我陪你了。",
+    "dialogue": [
+      {
+        "speaker_id": "daughter",
+        "text": "妈，现在换我陪你了。",
+        "mode": "on_screen"
+      }
+    ]
+  },
+  "actors": [
+    {
+      "id": "daughter",
+      "description": "病床旁的女儿",
+      "visible_channels": [
+        "eyes",
+        "mouth",
+        "hands",
+        "shoulders"
+      ]
+    },
+    {
+      "id": "mother",
+      "description": "躺在病床上的妈妈",
+      "visible_channels": [
+        "hands"
+      ]
+    }
+  ],
+  "trigger": {
+    "event": "女儿看见妈妈躺在病床上",
+    "source": "provided"
+  },
+  "inferences": [
+    {
+      "field": "shot.duration_seconds",
+      "value": 7,
+      "reason": "为握手、句前停顿、完整对白与落点留时；尚未试听"
+    },
+    {
+      "field": "shot",
+      "value": "16:9固定近景，女儿脸部与双方手部可见",
+      "reason": "用户未指定；需要同时读到面部与握持"
+    },
+    {
+      "field": "initial_state",
+      "value": "女儿双手靠近妈妈右手",
+      "reason": "把原意中的握手安排为本镜唯一主动作；手别为规划"
+    }
+  ],
+  "shot": {
+    "id": "SH010",
+    "duration_seconds": 7,
+    "ratio": "16:9",
+    "framing": "女儿近景带妈妈手部，女儿眼嘴与双方手部可见",
+    "camera": "眼高附近固定，不推拉",
+    "style_profile": "自然写实，病房光线与造型为规划；后续服从实际选中素材"
+  },
+  "capabilities": {
+    "model": null,
+    "verified": false,
+    "negative_prompt": null,
+    "audio": null,
+    "max_seconds": null
+  },
+  "beats": [
+    {
+      "id": "B1",
+      "start": 0,
+      "end": 2,
+      "trigger": "看向床上的妈妈",
+      "primary_action": {
+        "id": "A1",
+        "actor_id": "daughter",
+        "text": "双手合拢包住妈妈右手"
+      },
+      "cues": [
+        {
+          "actor_id": "daughter",
+          "channel": "eyes",
+          "text": "视线停在妈妈脸上"
+        },
+        {
+          "actor_id": "daughter",
+          "channel": "mouth",
+          "text": "嘴角抬起，保持闭口小幅微笑"
+        },
+        {
+          "actor_id": "mother",
+          "channel": "hands",
+          "text": "右手保持放松，被女儿双手包住"
+        }
+      ]
+    },
+    {
+      "id": "B2",
+      "start": 2,
+      "end": 5.5,
+      "trigger": "双手接触后，开口说原句",
+      "primary_action": {
+        "id": "A1",
+        "actor_id": "daughter",
+        "text": "维持双手包住妈妈右手"
+      },
+      "cues": [
+        {
+          "actor_id": "daughter",
+          "channel": "eyes",
+          "text": "眨眼一次后仍看向妈妈"
+        },
+        {
+          "actor_id": "daughter",
+          "channel": "mouth",
+          "text": "嘴角幅度略收，随原句发声开合"
+        }
+      ]
+    },
+    {
+      "id": "B3",
+      "start": 5.5,
+      "end": 7,
+      "trigger": "说完原句后保持接触",
+      "primary_action": {
+        "id": "A1",
+        "actor_id": "daughter",
+        "text": "继续维持握持，不重复合拢"
+      },
+      "cues": [
+        {
+          "actor_id": "daughter",
+          "channel": "eyes",
+          "text": "视线保持在妈妈脸上"
+        },
+        {
+          "actor_id": "daughter",
+          "channel": "mouth",
+          "text": "句末闭口，嘴角保持小幅上提"
+        },
+        {
+          "actor_id": "daughter",
+          "channel": "shoulders",
+          "text": "肩膀随一次呼气缓慢落下"
+        }
+      ]
+    }
+  ],
+  "dialogue": [
+    {
+      "speaker_id": "daughter",
+      "text": "妈，现在换我陪你了。",
+      "mode": "on_screen",
+      "start": 2.4,
+      "end": 5.5,
+      "voice": {
+        "volume": "轻声但字音清楚",
+        "rate": "稍慢，完整说完",
+        "pause": "开口前约0.4秒；妈之后略停",
+        "airiness": "轻微气声，不吞字",
+        "ending": "句末下落并收住"
+      }
+    }
+  ],
+  "segments": [
+    {
+      "id": "SG01",
+      "start": 0,
+      "end": 7,
+      "handoff": "start",
+      "start_state": "女儿双手靠近妈妈右手，妈妈右手放松",
+      "end_state": "女儿双手仍包住妈妈右手，原句说完，嘴角保持小幅上提"
+    }
+  ],
+  "positive_prompt": {
+    "action": "16:9，病房固定近景，女儿眼嘴与双方手部在画面内。女儿看着床上的妈妈，嘴角小幅上提；前两秒将双手合拢包住妈妈右手，此后一直维持握持。接触后眨眼一次，嘴角幅度略收，视线仍停在妈妈脸上。2.4至5.5秒说原句，句末闭口，保持小幅微笑，肩膀随一次呼气落下。妈妈右手放松，保持躺姿。摄影机固定，人物、病房和既有光线连续。"
+  },
+  "negative_prompt": [
+    "握持无故断开或重复抓握",
+    "手指穿插或多余肢体",
+    "夸张哭喊",
+    "人物身份与眼线漂移",
+    "口型与原句不匹配"
+  ]
+}

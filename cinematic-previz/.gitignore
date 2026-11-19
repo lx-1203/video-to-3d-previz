@@ -1,0 +1,9 @@
+.skill-source.json
+.skill-update.lock
+.skill-backups/
+.skill-write-*
+__pycache__/
+*.pyc
+.local/
+.env
+.env.*

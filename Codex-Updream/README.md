@@ -1,6 +1,6 @@
-# Updream for Codex 0.3.5
+# Updream for Codex 0.3.6
 
-0.3.5 为当前源码维护版，补齐跨画布合并后的逐批排版与验收。下方 Windows 下载链接指向已发布的 0.3.2。可按文末命令从当前源码构建 0.3.5。
+0.3.6 把无人值守安装和版本核验写进随包附带的 Updream 技能，并保留逐批合并与排版流程。下方 Windows 下载链接指向已发布的 0.3.2。可按文末命令从当前源码构建 0.3.6。
 
 这个版本优先使用 **Codex 桌面端自带浏览器**。不再要求安装 Edge 扩展、开启开发人员模式、选择扩展文件夹、导入配对 JSON 或启动额外 Bridge 服务。
 
@@ -53,7 +53,7 @@ codex plugin add updream-codex@xingji-updream
 ```text
 node --test Codex-Updream/tests/*.test.cjs
 python Codex-Updream/scripts/package-windows.py
-python Codex-Updream/scripts/verify-package.py Codex-Updream/artifacts/updream-codex-0.3.5-windows-x64.zip --codex-exe <官方Codex.exe路径>
+python Codex-Updream/scripts/verify-package.py Codex-Updream/artifacts/updream-codex-0.3.6-windows-x64.zip --codex-exe <官方Codex.exe路径>
 ```
 
 实际 ZIP 安装测试只使用临时 CODEX_HOME，验证官方 CLI、安装版本/启用状态、重装和配置保留，不操作真实桌面或网站。包内 Node 固定为官方 24.18.0 Windows x64，SHA256 为 `9a4eb5f1c29c6a2e93852ead46b999e284a6a5ca8bab4d4e241d587d025a52de`，随包保留官方许可。

@@ -1,4 +1,6 @@
-Codex-native Updream plugin 0.3.5 with automatic Windows installation.
+Codex-native Updream plugin 0.3.6 with automatic Windows installation.
+
+- The bundled skill now guides unattended Windows app plugin installs and upgrades from extraction through version and enablement verification. It distinguishes this path from loading the independent Bridge extension.
 
 - Carries the canvas merge rules in the plugin. Reserve space before pasting, finish and verify the layout of each batch, and distinguish transfer from layout progress.
 

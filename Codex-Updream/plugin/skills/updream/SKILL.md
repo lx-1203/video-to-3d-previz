@@ -1,11 +1,24 @@
 ---
 name: updream
-description: Use for opening Updream in the Codex built-in browser, checking a canvas, placing authorized text/assets, or arranging and merging canvases. Prefer this route when the user does not want an Edge/Chrome extension or desktop control.
+description: Use when installing or updating Updream for Codex on Windows, opening Updream in the Codex built-in browser, checking a canvas, placing authorized text/assets, or arranging and merging canvases.
 ---
 
 # Updream for Codex
 
 Use the host's supported **built-in browser** tools. This plugin supplies a workflow; it does not add a browser driver, MCP daemon, login credential or browser permission. Installing it does not prove a live page is connected.
+
+## Install or update when requested
+
+- Confirm the install target. **Codex Settings → Integrations → Plugins** lists the Updream for Codex app plugin. **Browser → Extensions** lists browser extensions such as the independent Bridge. An ordinary canvas request does not authorize installing or updating either.
+- For the Windows **app plugin**, use an existing trusted Windows ZIP or an already extracted bundle of the requested version. If only the ZIP exists, extract it with `Expand-Archive -LiteralPath <zip> -DestinationPath <new-folder>`. Use the extracted `Updream-Codex` directory containing `bundle-manifest.json`, `runtime/node.exe`, and `scripts/install.cjs`. Check the bundle version and published checksum when available. Reuse an already extracted matching bundle.
+- If authorized to install or update, run the bundled installer from that directory. Continue after extraction; opening the folder or showing the command does not install the plugin. The direct command avoids the double-click launcher's pause:
+
+  ```powershell
+  .\runtime\node.exe .\scripts\install.cjs
+  ```
+
+  If this shell does not use the target desktop's Codex configuration, pass `--codex-home '<existing target Codex configuration directory>'` after identifying it. The installer checks bundle hashes, registers the local marketplace through the official Codex CLI, installs the plugin and reads back the enabled version. Require exit code 0 and the expected version in the final JSON; on failure, report the stage. Check live browser access separately. An active chat may still have the previous skill loaded; preserve ongoing work and do not restart the app as part of unattended installation.
+- For an explicit **Bridge browser extension** request, use the browser's supported **Load unpacked** interface and the provisioned Bridge extension directory with its local pairing. Use authorized app controls for the folder selection when available; if the picker or a required confirmation needs the user, ask only for that step. The app plugin installer does not load the Bridge. A silent Bridge install and working connectivity in Codex's built-in browser have not been verified. Verify the extension is listed and enabled, then verify the connection with a read-only canvas check before reporting it works.
 
 ## Keep the two connection routes separate
 

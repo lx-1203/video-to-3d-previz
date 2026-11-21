@@ -1,0 +1,15 @@
+{
+  "cpu_python": "envs/vision/python.exe",
+  "geometry_python": "envs/depth/python.exe",
+  "object_model": {
+    "path": "models/yolox_s.onnx",
+    "sha256": "replace-with-64-character-sha256"
+  },
+  "geometry_model": {
+    "path": "models/moge2.pt",
+    "sha256": "replace-with-64-character-sha256"
+  },
+  "geometry_device": "cpu",
+  "max_edge": 640,
+  "tokens": 1200
+}

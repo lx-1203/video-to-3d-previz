@@ -1,0 +1,14 @@
+{
+  "scene_runtime": "fullclip-scene-runtime.json",
+  "pose_python": "path/to/python.exe",
+  "pose_model": "path/to/rtmpose_s_body17.onnx",
+  "face_model": "path/to/face_detection_yunet_2023mar.onnx",
+  "head_model": "path/to/person_head.onnx",
+  "detector_python": "path/to/python.exe",
+  "detector_repo": "path/to/GEM-X",
+  "detector_model": "path/to/yolox_humanart.onnx",
+  "template": "path/to/approved-character.blend",
+  "component_contract": "path/to/component-contract.json",
+  "height_m": 1.75,
+  "track_model": "path/to/vittrack.onnx"
+}

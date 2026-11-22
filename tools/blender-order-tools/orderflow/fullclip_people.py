@@ -57,6 +57,8 @@ def run(
         from . import fullclip_people_heads as heads_backend, fullclip_people_observe as observe
         from .fullclip_people_gaps import fill as fill_person_gaps
         from .fullclip_people_fragments import fill_stationary_fragments
+        from .fullclip_people_partial import extend_partial_bodies
+        from .fullclip_people_partial_pose import apply_partial_posture
         from .fullclip_people_support import analyze as analyze_support
         from .fullclip_people_posture import apply as posture_priors
         from .fullclip_people_temporal import stabilize as stabilize_motion
@@ -65,9 +67,12 @@ def run(
         from .fullclip_people_solve import read_profile, solve_track, stabilize_close_roll
         from .fullclip_people_tracks import assign, fill_short_gaps, merge_heads
     else:
-        import fullclip_people_heads as heads_backend, fullclip_people_observe as observe
+        import fullclip_people_heads as heads_backend
+        import fullclip_people_observe as observe
         from fullclip_people_gaps import fill as fill_person_gaps
         from fullclip_people_fragments import fill_stationary_fragments
+        from fullclip_people_partial import extend_partial_bodies
+        from fullclip_people_partial_pose import apply_partial_posture
         from fullclip_people_support import analyze as analyze_support
         from fullclip_people_posture import apply as posture_priors
         from fullclip_people_temporal import stabilize as stabilize_motion
@@ -164,6 +169,7 @@ def run(
     fill_person_gaps(video, frames, width)
     fill_region(video, frames, track_model, width, height)
     fill_short_gaps(video, frames, width, height)
+    partial_tracks = extend_partial_bodies(video, frames, width, height, model, head_model)
     groups = defaultdict(list)
     for row in frames:
         for actor in row["actors"]:
@@ -175,6 +181,7 @@ def run(
     stabilize_motion(video, frames, width, height, profile)
     for track, entries in groups.items():
         solve_track(entries, profile)
+        apply_partial_posture(entries, profile)
         for _, actor in entries:
             actor.pop("interpolation_endpoints", None)
             actor["identity_state"] = "shot_local_unverified"
@@ -206,6 +213,7 @@ def run(
         "source_frame_count": len(frames),
         "frames": frames,
         "coverage": coverage,
+        "partial_body_extensions": partial_tracks,
         "pose_model_sha256": pose_sha,
         "face_model_sha256": face_sha,
         "head_model_sha256": head_sha,

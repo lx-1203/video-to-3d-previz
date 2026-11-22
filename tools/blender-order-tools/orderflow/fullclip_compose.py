@@ -117,7 +117,7 @@ def compose(params, foreground_gauge=None):
     from orderflow.fullclip_guardrail_actor_visibility import fit_observed_actor_depth
 
     info["observed_actor_depth"] = fit_observed_actor_depth(
-        scene, camera, people, info, root / "guardrails.json"
+        scene, camera, people, info, root / "guardrails.json", source_config=cfg
     )
     from orderflow.fullclip_body_size import fit_handover
 
@@ -128,6 +128,9 @@ def compose(params, foreground_gauge=None):
 
     info["gallery_support"] = fit_walkway(scene, manifest, people, info, cfg["height_m"])
     info["foreground_depth"] = fullclip_scene.finalize_foreground(scene, camera, manifest, info)
+    from orderflow.fullclip_lower_tier import fit_lower_tier
+
+    info["partial_tier_depth"] = fit_lower_tier(scene, camera, people, info)
     from orderflow.fullclip_keyframes import reduce_pose_keys
 
     info["pose_keys"] = {

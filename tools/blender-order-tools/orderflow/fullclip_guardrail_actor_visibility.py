@@ -210,7 +210,9 @@ def _observed(scene, rig, actor, camera, deps, width, height):
     )
 
 
-def fit_observed_actor_depth(scene, camera, people, binding_info, foreground_evidence=None):
+def fit_observed_actor_depth(
+    scene, camera, people, binding_info, foreground_evidence=None, *, source_config=None
+):
     import bpy
 
     rigs = {}
@@ -277,9 +279,38 @@ def fit_observed_actor_depth(scene, camera, people, binding_info, foreground_evi
             if details:
                 result[name] = details
         if foreground_evidence is not None:
-            result["static_seating"] = refit_conflicting_seating(
+            originals = [
+                (ob, ob.matrix_world.copy())
+                for ob in scene.objects
+                if ob.get("reconstruction_kind") in SEATING and ob.parent is None
+            ]
+            seat = refit_conflicting_seating(
                 scene, camera, people, rigs, result, foreground_evidence
             )
+            if source_config is not None and originals:
+                if __package__:
+                    from .fullclip_guardrail_material_bind import augment
+                else:
+                    from fullclip_guardrail_material_bind import augment
+                extended = augment(scene, camera, people, rigs, foreground_evidence, source_config)
+                if extended is not None and extended.get("material_coverage", {}).get(
+                    "material_witnesses", 0
+                ):
+                    poses = [ob.matrix_world.copy() for ob, _ in originals]
+                    for ob, old in originals:
+                        ob.matrix_world = old
+                    scene.view_layers[0].update()
+                    final = refit_conflicting_seating(
+                        scene, camera, people, rigs, result, extended
+                    )
+                    if final.get("applied"):
+                        seat = final
+                    else:
+                        for (ob, _), pose in zip(originals, poses):
+                            ob.matrix_world = pose
+                        scene.view_layers[0].update()
+                    seat["material_coverage"] = extended["material_coverage"]
+            result["static_seating"] = seat
         return result
     finally:
         scene.frame_set(initial)

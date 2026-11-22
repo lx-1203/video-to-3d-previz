@@ -42,6 +42,39 @@ class NativeEditToolsTest(unittest.TestCase):
         for obj in reversed(self.created):
             bpy.data.objects.remove(obj, do_unlink=True)
 
+    def test_reopened_camera_distinguishes_visible_occluded_and_unobserved_samples(self):
+        from mathutils import Vector
+        from orderflow.fullclip_pose_audit import camera_visibility
+
+        bpy.ops.object.camera_add(location=(20, 0, 6), rotation=(0, 0, 0))
+        camera = bpy.context.active_object
+        bpy.ops.mesh.primitive_cube_add(size=0.6, location=(20, 0, 0))
+        subject = bpy.context.active_object
+        bpy.ops.mesh.primitive_cube_add(size=0.6, location=(20, 0, 3))
+        blocker = bpy.context.active_object
+        self.created.extend((camera, subject, blocker))
+        scene = bpy.context.scene
+
+        def observe():
+            bpy.context.view_layer.update()
+            deps = bpy.context.evaluated_depsgraph_get()
+            return camera_visibility(
+                scene,
+                deps,
+                camera.evaluated_get(deps),
+                subject.evaluated_get(deps),
+                [("head", Vector((20, 0, 0))), ("off_mesh", Vector((22, 0, 0)))],
+            )
+
+        blocked = observe()
+        self.assertEqual(blocked["visible_samples"], [])
+        self.assertEqual(blocked["blockers"], {blocker.name: 1})
+        blocker.location.x += 3
+        visible = observe()
+        self.assertEqual(visible["visible_samples"], ["head"])
+        self.assertEqual(visible["sampled_surface_points"], 1)
+        self.assertEqual(visible["blockers"], {})
+
     def test_color_on_unmaterialed_link_does_not_mutate_its_twin(self):
         bpy.ops.mesh.primitive_cube_add()
         cube = bpy.context.active_object

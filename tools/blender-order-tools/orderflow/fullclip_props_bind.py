@@ -59,12 +59,14 @@ def bind(scene, camera, data, binding_info):
         "surface_depth_samples": 0,
         "inconsistent_contact_depth_samples": 0,
         "max_contact_depth_spread_scene_units": 0.0,
+        "temporal_depth_conflicts": [],
         "uncertain_contact_depth_frames": [],
     }
     initial = scene.frame_current
     try:
         for track in data["tracks"]:
             frames = []
+            solid = track.get("rigid_solid")
             for sample in track["samples"]:
                 i = sample["frame"]
                 scene.frame_set(i + 1)
@@ -73,7 +75,7 @@ def bind(scene, camera, data, binding_info):
                 camera_matrix = cam.matrix_world.normalized()
                 inverse = camera_matrix.inverted()
                 anchors = []
-                for contact in sample["contacts"]:
+                for contact in sample.get("depth_contacts", sample["contacts"]):
                     rig = rigs.get((str(track["shot_id"]), contact["track_id"]))
                     if rig is None:
                         continue
@@ -120,7 +122,12 @@ def bind(scene, camera, data, binding_info):
                     z = depth if at_depth is None else at_depth
                     clip = projection @ Vector((0, 0, -z, 1))
                     p = unproject @ Vector(
-                        ((2 * u / w - 1) * clip.w, (1 - 2 * v / h) * clip.w, clip.z, clip.w)
+                        (
+                            (2 * u / w - 1) * clip.w,
+                            (1 - 2 * v / h) * clip.w,
+                            clip.z,
+                            clip.w,
+                        )
                     )
                     return camera_matrix @ (p.to_3d() / p.w)
 
@@ -128,7 +135,7 @@ def bind(scene, camera, data, binding_info):
                 # covering its pixels at the wrist's depth, without pulling it past the set
                 # or an unrelated actor. Only inspect surfaces within a forearm's reach.
                 owners = {a[2] for a in anchors}
-                screen = np.asarray(sample["polygon_uv"], float)
+                screen = np.asarray(sample.get("solid_outline_uv", sample["polygon_uv"]), float)
                 tests = np.vstack(
                     (sample["center_uv"], screen, (screen + sample["center_uv"]) * 0.5)
                 )
@@ -145,6 +152,24 @@ def bind(scene, camera, data, binding_info):
                 if surface < depth and surface > cam.data.clip_start:
                     depth = surface
                     report["surface_depth_samples"] += 1
+                if solid:
+                    poly = np.asarray(sample["solid_outline_uv"], dtype=float)
+                    cx, cy = (poly.max(0) + poly.min(0)) * 0.5
+                    location = to_world(cx, cy)
+                    metric = (to_world(cx + 1, cy) - location).length
+                    local_center = inverse @ location
+                    frames.append(
+                        (
+                            i,
+                            location,
+                            cam.matrix_world.to_quaternion(),
+                            metric,
+                            poly,
+                            (np.array(local_center[:2]), depth, cam.data.type, length),
+                        )
+                    )
+                    report["multi_hand_samples"] += len(sample["contacts"]) > 1
+                    continue
                 cx, cy = sample["center_uv"]
                 angle = math.radians(sample["angle_deg"])
                 if frames:
@@ -166,7 +191,14 @@ def bind(scene, camera, data, binding_info):
                     32,
                 )
                 frames.append(
-                    (i, center, rotation, (major.length, minor.length, 1), outline, angle)
+                    (
+                        i,
+                        center,
+                        rotation,
+                        (major.length, minor.length, 1),
+                        outline,
+                        angle,
+                    )
                 )
                 report["multi_hand_samples"] += len(sample["contacts"]) > 1
             if not frames:
@@ -174,14 +206,23 @@ def bind(scene, camera, data, binding_info):
             mesh = bpy.data.meshes.new(track["id"] + " visible contour")
             # Use fixed wall thickness estimated from the least-occluded minor span.
             # The visible face keeps the measured boundary; the sides remain editable.
-            thickness = float(np.percentile([r[3][1] for r in frames], 65)) * 0.18
-            ring = frames[0][4]
-            count = len(ring)
-            vertices = [(float(x), float(y), z) for z in (0.0, thickness) for x, y in ring]
-            faces = [tuple(reversed(range(count))), tuple(range(count, 2 * count))]
-            faces.extend(
-                (i, (i + 1) % count, (i + 1) % count + count, i + count) for i in range(count)
-            )
+            if solid:
+                # Use broad views to estimate a single physical span. Subsequent
+                # apparent shortening is fitted by rotation at each actual hand depth.
+                spans = [r[3] * np.ptp(r[4], axis=0).max() for r in frames]
+                unit = float(np.percentile(spans, 86))
+                vertices = [[v * unit for v in co] for co in solid["vertices"]]
+                faces = solid["faces"]
+                thickness = float(np.ptp(np.asarray(vertices)[:, 2]))
+            else:
+                thickness = float(np.percentile([r[3][1] for r in frames], 65)) * 0.18
+                ring = frames[0][4]
+                count = len(ring)
+                vertices = [(float(x), float(y), z) for z in (0.0, thickness) for x, y in ring]
+                faces = [tuple(reversed(range(count))), tuple(range(count, 2 * count))]
+                faces.extend(
+                    (i, (i + 1) % count, (i + 1) % count + count, i + count) for i in range(count)
+                )
             mesh.from_pydata(vertices, [], faces)
             mesh.update()
             obj = bpy.data.objects.new("Observed " + track["id"], mesh)
@@ -192,6 +233,9 @@ def bind(scene, camera, data, binding_info):
             obj["geometry_basis"] = (
                 "solid outline proxy; hidden thickness estimated from visible minor span"
             )
+            if solid:
+                obj["geometry_basis"] = solid["geometry_basis"]
+                obj["fixed_mesh"] = True
             obj["estimated_thickness_m"] = thickness
             mat = bpy.data.materials.new(obj.name + " measured color")
             color = np.median([s["rgb"] for s in track["samples"]], axis=0) / 255.0
@@ -217,7 +261,79 @@ def bind(scene, camera, data, binding_info):
                     setattr(obj, attr, hidden)
                     obj.keyframe_insert(data_path=attr, frame=f)
             last = None
-            for i, center, rotation, scale, outline, _ in frames:
+            if solid:
+                if __package__:
+                    from .fullclip_handover_pose import continuous_depths, fit_pose
+                else:
+                    from fullclip_handover_pose import continuous_depths, fit_pose
+                from mathutils import Euler
+
+                fps = scene.render.fps / scene.render.fps_base
+                local_verts = np.asarray(solid["vertices"])
+                rays = []
+                for _, _, camera_rotation, _, _, (
+                    offset,
+                    depth,
+                    camera_type,
+                    _,
+                ) in frames:
+                    local_ray = (
+                        (offset[0] / depth, offset[1] / depth, -1.0)
+                        if camera_type == "PERSP"
+                        else (0.0, 0.0, -1.0)
+                    )
+                    rays.append(camera_rotation @ Vector(local_ray))
+                shifts = continuous_depths(
+                    [r[1][:] for r in frames],
+                    [r[:] for r in rays],
+                    [r[0] for r in frames],
+                    unit,
+                    fps,
+                )
+                previous_frame = None
+                for row, ray, depth_shift in zip(frames, rays, shifts):
+                    i, center, camera_rotation, metric, polygon, camera_info = row
+                    offset, depth, camera_type, forearm_length = camera_info
+                    previous = None
+                    if previous_frame == i - 1 and last is not None:
+                        previous = np.asarray((camera_rotation.inverted() @ last).to_euler("XYZ"))
+                    previous_frame = i
+                    if abs(depth_shift) > forearm_length * 0.5:
+                        report["temporal_depth_conflicts"].append(
+                            dict(
+                                prop_id=track["id"],
+                                source_frame=i,
+                                state="unknown",
+                                wrist_plane_adjustment=round(float(depth_shift), 5),
+                            )
+                        )
+                    center = center + ray * depth_shift
+                    if camera_type == "PERSP":
+                        ratio = (depth + depth_shift) / depth
+                        metric *= ratio
+                        offset = offset * ratio
+                    depth += depth_shift
+                    angles, shift = fit_pose(
+                        local_verts,
+                        polygon,
+                        metric,
+                        offset,
+                        depth,
+                        unit,
+                        previous,
+                        camera_type == "PERSP",
+                        max_turn=math.radians(345) / fps,
+                    )
+                    rotation = camera_rotation @ Euler(angles, "XYZ").to_quaternion()
+                    center = center + camera_rotation @ Vector((shift[0], shift[1], 0))
+                    if last:
+                        rotation.make_compatible(last)
+                    last = rotation.copy()
+                    obj.location = center
+                    obj.rotation_quaternion = rotation
+                    obj.keyframe_insert(data_path="location", frame=i + 1)
+                    obj.keyframe_insert(data_path="rotation_quaternion", frame=i + 1)
+            for i, center, rotation, scale, outline, _ in [] if solid else frames:
                 if last:
                     rotation.make_compatible(last)
                 last = rotation.copy()

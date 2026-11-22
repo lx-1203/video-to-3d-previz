@@ -128,6 +128,9 @@ def compose(params, foreground_gauge=None):
 
     info["gallery_support"] = fit_walkway(scene, manifest, people, info, cfg["height_m"])
     info["foreground_depth"] = fullclip_scene.finalize_foreground(scene, camera, manifest, info)
+    from orderflow.fullclip_grille_bind import register_fixed_grilles
+
+    info["grille_registration"] = register_fixed_grilles(scene, camera)
     from orderflow.fullclip_lower_tier import fit_lower_tier
 
     info["partial_tier_depth"] = fit_lower_tier(scene, camera, people, info)

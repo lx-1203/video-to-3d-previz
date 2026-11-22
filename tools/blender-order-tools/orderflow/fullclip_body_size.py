@@ -1274,6 +1274,12 @@ def reconcile_handover_props(scene, camera, evidence, prop_binding, handover):
             if len(matches) != 1:
                 continue
             obj = matches[0]
+            # The rigid binder has already used the evaluated wrists and camera
+            # for its full-track solve. A per-frame push/rescale would distort
+            # its size and invalidate the verified translation and rotation path.
+            if obj.get("fixed_mesh"):
+                results.append(dict(frame=i, prop=key[0], state="rigid_track_pose_preserved"))
+                continue
             scene.frame_set(i + 1)
             deps = bpy.context.evaluated_depsgraph_get()
             cam = camera.evaluated_get(deps)

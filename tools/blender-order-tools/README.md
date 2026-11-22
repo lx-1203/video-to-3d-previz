@@ -1,4 +1,4 @@
-# 接单助手 / OrderFlow 0.4.0
+# 接单助手 / OrderFlow 0.4.1
 
 在 Blender 的“接单助手”面板设置参考视频、帧段和输出位置，后台生成白模原声影片、同步上下对照，并核验文件。CameraSolve 焦距候选、动作参考和角色配色也在同一面板处理。
 
@@ -6,7 +6,7 @@
 
 ## 安装与设置
 
-1. Blender → 编辑 → 偏好设置 → 插件 → 从磁盘安装，选择 `orderflow-0.4.0.zip`，启用“接单助手 / OrderFlow”。
+1. Blender → 编辑 → 偏好设置 → 插件 → 从磁盘安装，选择 `orderflow-0.4.1.zip`，启用“接单助手 / OrderFlow”。
 2. 在插件偏好设置中选择 FFmpeg，以及装有 `av`、`numpy`、`Pillow` 的外部 Python。导出前会实际检查这些程序能否运行。交稿打包另须把“动作工作台更新检查”设为已安装主技能的 `scripts/check_update.py`，把骨架检查器设为同目录的 `scripts/validate_skeleton_overlay.py`。
 3. 打开已经保存的工程，在 3D 视图按 N，切到“接单助手”。填写订单名、参考视频和有足够空间的输出目录。
 4. 起止帧是 Blender 帧号。“参考起点”表示**工程首帧**对应原片的秒数。部分片段还会自动加上起始帧相对工程首帧的时间偏移。
@@ -16,6 +16,8 @@
 ## 全片自动预演
 
 在 Blender 的「接单助手 → 全片自动预演」选择原片、本地后端配置、输出目录和单栏分辨率，点击「全片转白模预演」。插件从首帧解码至片尾，按镜头估计相机、场景遮挡、人体和手持物，使用本机角色模板生成可编辑工程。后台按顺序运行本地模型。运行前在线核对已安装技能版本，视频与模型推理留在本机。
+
+识别、三维约束和动作关键帧由本地插件生成。外部审片意见用于复现误差和验证代码修订。前景有规则格栅时，插件在同一镜头的多个时刻测量杆件中心、宽度及遮挡，按实际测到的构件生成可单独编辑的网格。
 
 复制 `examples/fullclip-backend.json` 和 `examples/fullclip-scene-runtime.json`，把模型、Python 和模板填为本地路径。支持以各自配置文件为基准的相对路径。媒体 Python 使用 PyAV、OpenCV、SciPy 和 NumPy。姿态 Python 使用 ONNX Runtime、OpenCV、PyAV、SciPy 和 NumPy。场景的视觉环境使用 PyAV、OpenCV、NumPy、ONNX Runtime、rtmlib，深度环境使用 PyTorch 与 MoGe2。场景运行配置需填写本地 COCO80 YOLOX-S ONNX 与 MoGe2 权重的 SHA-256。获取文件后可用 PowerShell 的 `Get-FileHash -Algorithm SHA256` 核对。插件内置选帧、物件识别与场景构建入口。
 

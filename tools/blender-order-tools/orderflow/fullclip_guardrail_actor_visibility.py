@@ -5,6 +5,7 @@ import numpy as np
 
 SEATING = {
     "Seat back",
+    "Seat back frame",
     "Seat cushion",
     "Seat pedestal",
     "Seat armrest",

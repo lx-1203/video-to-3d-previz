@@ -503,6 +503,11 @@ def measure_props(source, people, output, *, timeline=None):
     ]
     follow_confirmed(source, info, accepted, cuts, fps)
     accepted = join_adjacent(accepted, cuts)
+    if __package__:
+        from .fullclip_handover import fit_handover_solids
+    else:
+        from fullclip_handover import fit_handover_solids
+    fit_handover_solids(source, accepted, info)
     result = dict(
         schema="orderflow.visible_props.v1",
         source_sha256=sha,

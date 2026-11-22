@@ -415,6 +415,61 @@ def _observed_row_views(points, step, frame, frames, cams, intr, depth, project,
     return seen
 
 
+def _grille_solids(grille, coherent, depth, project, intr, image, frame):
+    h, w = image.shape[:2]
+    parts = []
+    # Use a common physical support plane. Depth inside narrow, blurred
+    # bars is often a sample of the moving person behind the lattice.
+    z = (
+        float(np.median([r["axial_depth"] for r in coherent]))
+        if coherent
+        else float(np.nanmedian(depth)) * 0.75
+    )
+    if not np.isfinite(z) or z <= 0:
+        return []
+    upright_depth = max(
+        0.0001,
+        0.45 * z * np.median([b["width"] for b in grille[0]]) / (w * intr[0, 0]),
+    )
+    for axis, family in enumerate(grille):
+        for band in family:
+            lo = band["center"] - band["width"] / 2
+            hi = band["center"] + band["width"] / 2
+            rect = (
+                np.array([[lo, -h * 0.05], [hi, -h * 0.05], [hi, h * 1.05], [lo, h * 1.05]])
+                if axis == 0
+                else np.array([[-w * 0.05, lo], [w * 1.05, lo], [w * 1.05, hi], [-w * 0.05, hi]])
+            )
+            # Cross members sit behind the uprights. Their faces
+            # touch and their independent meshes remain editable.
+            thickness = z * band["width"] / (w * intr[0, 0] if axis == 0 else h * intr[1, 1])
+            front = z if axis == 0 else z + upright_depth
+            part = _solid(
+                rect,
+                np.full(4, front),
+                project,
+                upright_depth if axis == 0 else max(0.0001, thickness * 0.45),
+                frame,
+                "Structural frame",
+                2,
+            )
+            part.update(
+                axis="vertical" if axis == 0 else "horizontal",
+                measured_rect=rect.tolist(),
+                foreground_candidate=True,
+                axial_depth=front,
+                ridge_evidence=band,
+                grille_image_length=w if axis == 0 else h,
+            )
+            # Preserve relative source luminance while retaining clay shading.
+            x0, y0 = np.maximum(np.floor(rect.min(0)).astype(int), 0)
+            x1, y1 = np.minimum(np.ceil(rect.max(0)).astype(int), [w, h])
+            region = image[y0:y1, x0:x1]
+            part["grille_luma"] = float(np.median(cv2.cvtColor(region, cv2.COLOR_BGR2GRAY)) / 255)
+            parts.append(part)
+    return parts
+
+
 def measure_views(frames, views, boxes, original, cams, scales, intr, det, anchor, clean_fn):
     h, w = frames[anchor].shape[:2]
     seats = _seating_samples(frames[anchor], det["detections"], original)
@@ -434,6 +489,13 @@ def measure_views(frames, views, boxes, original, cams, scales, intr, det, ancho
     seating = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(seating)
 
+    spec = importlib.util.spec_from_file_location(
+        "orderflow_scene_grille", Path(__file__).with_name("fullclip_grille.py")
+    )
+    grille_module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(grille_module)
+
+    grille = None if seats else grille_module.measure(frames)
     occupied_seats = []
     evidence = []
     for frame in [anchor, *sorted(set(views) - {anchor})]:
@@ -441,7 +503,7 @@ def measure_views(frames, views, boxes, original, cams, scales, intr, det, ancho
         depth = cv2.resize(views[frame], (w, h)) * scales[frame]
         valid = np.isfinite(depth) & (depth > 0) & ~unknown
         project = _projector(cams[frame], intr, w, h)
-        simple = (
+        simple = grille is not None or (
             np.percentile(cv2.cvtColor(frames[anchor], cv2.COLOR_BGR2GRAY), 75) < 49 and not seats
         )
         candidates = _seat_candidates(image, valid, seats)
@@ -562,7 +624,15 @@ def measure_views(frames, views, boxes, original, cams, scales, intr, det, ancho
             # Repeated long, thin bars measured across most of the picture form a grating.
             # Preserve the continuous spans and omit short fragment duplicates.
             coherent = [r for r in axial if r["edge_occupancy"] > 0.51]
-            if len(coherent) >= 4:
+            measured_parts = (
+                _grille_solids(grille, coherent, depth, project, intr, frames[frame], frame)
+                if grille is not None and frame == anchor
+                else []
+            )
+            if measured_parts:
+                del objects[beginning + len(items) :]
+                objects.extend(measured_parts)
+            elif len(coherent) >= 4:
                 del objects[beginning + len(items) :]
                 family_widths = {}
                 for direction in ("horizontal", "vertical"):
@@ -642,6 +712,9 @@ def measure_views(frames, views, boxes, original, cams, scales, intr, det, ancho
     objects, global_room = seating.permanent_room(objects, cams, intr, w, h)
     additions, gaps = seating.fill_observed_row_gaps(objects, frames, cams, intr, boxes, original)
     objects.extend(additions)
+    seat_profile_evidence = seating.refine_observed_upholstery(
+        objects, frames, views, scales, cams, intr, boxes, original
+    )
     recess_evidence = []
     if len(views) >= 2 and not simple:
         spec = importlib.util.spec_from_file_location(
@@ -654,6 +727,10 @@ def measure_views(frames, views, boxes, original, cams, scales, intr, det, ancho
             frames, views, scales, cams, intr, boxes, original, objects
         )
         objects.extend(masonry)
+    if seat_profile_evidence:
+        seat_profile_evidence["support_visibility"] = seating.constrain_observed_seat_visibility(
+            objects, seat_profile_evidence, cams, intr, (w, h)
+        )
     if global_room:
         global_room["inferred_chairs"] = sum(o["kind"] == "Seat back" for o in additions)
         global_room["physical_parts"] = len(objects)
@@ -663,5 +740,6 @@ def measure_views(frames, views, boxes, original, cams, scales, intr, det, ancho
         "stationary_chair_tracks": tracks,
         "global_room": global_room,
         "internal_gap_tests": gaps,
+        "seat_profile_evidence": seat_profile_evidence,
         "observed_recesses": recess_evidence,
     }

@@ -154,6 +154,11 @@ def build_scene(scene, manifest, shot_world_scale=None):
             if "face_material" in item:
                 mesh.polygons.foreach_set("material_index", item["face_material"])
                 mesh.polygons.foreach_set("use_smooth", [True] * len(mesh.polygons))
+            if "grille_luma" in item:
+                obj["grille_luma"] = float(item["grille_luma"])
+                obj["grille_axis"] = item["axis"]
+                obj["grille_frame_centers"] = json.dumps(item["ridge_evidence"]["frames"])
+                obj["grille_image_length"] = item["grille_image_length"]
             if item.get("background_luminance_only"):
                 obj["background_luminance_only"] = True
             if "aperture_side" in item:

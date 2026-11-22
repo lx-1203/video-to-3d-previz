@@ -17,6 +17,7 @@ class Object(dict):
         self.matrix_world = np.eye(4)
         self.location = np.zeros(3)
         self.scale = np.ones(3)
+        self.children = ()
         self.parent = None
         self.hide_render = False
         self.keys = []

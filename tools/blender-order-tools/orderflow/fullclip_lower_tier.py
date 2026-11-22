@@ -465,7 +465,11 @@ def fit_lower_tier(scene, camera, people, binding_info):
                 rig.location = Vector(m["root"] + _back(m["uv"], depth, m["view"]) - m["loc"])
                 rig.keyframe_insert(data_path="location", frame=f + 1)
                 records.append({"frame": f, "shoulder_depth_m": round(depth, 4)})
+            from .fullclip_contact import fit_contact
+
+            contact = fit_contact(scene, camera, rig, track, width, height, _view)
             results[str(rig["track_id"])] = {
+                "inferred_contact": contact,
                 "frames": records,
                 "tier_scale": round(scale, 5),
                 "preserved_bank_visibility": round(accepted_visibility, 5),

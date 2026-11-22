@@ -63,7 +63,21 @@ def finish_scene(scene):
             shader.inputs["Base Color"].default_value = mat.diffuse_color
             shader.inputs["Roughness"].default_value = mat.roughness
             materials[group] = mat
-        if obj.get("background_luminance_only"):
+        if "grille_luma" in obj:
+            # Quantized neutral clay preserves the observed foreground/background
+            # value ordering across the aperture without baking image textures.
+            tone = round((0.12 + 0.63 * float(obj["grille_luma"])) * 48) / 48
+            key = ("grille", tone)
+            if key not in materials:
+                mat = materials[group].copy()
+                mat.diffuse_color = (tone, tone, tone, 1.0)
+                mat.node_tree.nodes.get("Principled BSDF").inputs[
+                    "Base Color"
+                ].default_value = mat.diffuse_color
+                materials[key] = mat
+            obj.data.materials.clear()
+            obj.data.materials.append(materials[key])
+        elif obj.get("background_luminance_only"):
             # Retain only low-frequency neutral light on an explicitly inferred
             # backing. Material slots keep the original per-face assignment.
             for index, old in enumerate(tuple(obj.data.materials)):

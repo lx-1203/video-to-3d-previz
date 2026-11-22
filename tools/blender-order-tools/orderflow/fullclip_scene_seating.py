@@ -1100,3 +1100,120 @@ def repeated_rows(image, known, candidates):
                 pts.reverse()
         extended.append((np.asarray(pts), shape, step))
     return extended
+
+
+def refine_observed_upholstery(items, frames, views, scales, cameras, intr, boxes, original):
+    import importlib.util
+    from pathlib import Path
+
+    spec = importlib.util.spec_from_file_location(
+        "orderflow_seat_profiles", Path(__file__).with_name("fullclip_seat_profiles.py")
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module.refine(items, frames, views, scales, cameras, intr, boxes, original)
+
+
+def _intersects(vertices, indices, origins, targets):
+    # Slab intersection in the measured parallelepiped's local basis. The target is
+    # inside a cushion, so discard intersections at or beyond that endpoint.
+    basis = (vertices[indices] - vertices[0]).T
+    if abs(np.linalg.det(basis)) < 1.0e-10:
+        return np.zeros(len(origins), bool)
+    inv = np.linalg.inv(basis).T
+    start = (origins - vertices[0]) @ inv
+    delta = (targets - origins) @ inv
+    parallel = abs(delta) < 1.0e-9
+    valid = ~np.any(parallel & ((start < 0) | (start > 1)), axis=1)
+    safe = np.where(parallel, 1.0, delta)
+    ta, tb = -start / safe, (1 - start) / safe
+    enter = np.max(np.where(parallel, -np.inf, np.minimum(ta, tb)), axis=1)
+    leave = np.min(np.where(parallel, np.inf, np.maximum(ta, tb)), axis=1)
+    return valid & (leave > np.maximum(enter, 0)) & (enter < 0.994)
+
+
+def constrain_observed_seat_visibility(items, evidence, cameras, intr, size):
+    """Bound the inferred thickness of tiers against witnessed, unoccluded cushions."""
+    records = evidence.get("observations", [])
+    if not records:
+        return []
+    samples = []
+    destinations = []
+    frame_ids = []
+    for r in records:
+        for f in [r["frame"], *r["views"]]:
+            samples.append(cameras[f][:3, 3])
+            destinations.append(r["target_world"])
+            frame_ids.append(f)
+    origins, targets = np.array(samples), np.array(destinations)
+    frame_ids = np.array(frame_ids)
+    result = []
+    for item in items:
+        kind = item["kind"]
+        if kind not in ("Stepped seating platform", "Recess wall surround"):
+            continue
+        if kind == "Recess wall surround" and "inferred exterior extent" not in item.get(
+            "observation_status", ""
+        ):
+            continue
+        vertices = np.array(item["vertices"])
+        basis_idx = [1, 2, 4] if kind == "Stepped seating platform" else [1, 3, 4]
+        before = _intersects(vertices, basis_idx, origins, targets)
+        if len(np.unique(frame_ids[before])) < 2:
+            continue
+        # The platform top and the seating support line stay fixed. Reduce only its
+        # assumed front/back extension or the inferred solid below that surface.
+        choices = []
+        if kind == "Stepped seating platform":
+            for depth in (1.0, 0.75, 0.50, 0.32):
+                for height in (1.0, 0.70, 0.45, 0.24):
+                    v = vertices.copy()
+                    d = (vertices[2] - vertices[0]) * (1 - depth) * 0.5
+                    v[[0, 1, 4, 5]] += d
+                    v[[2, 3, 6, 7]] -= d
+                    v[:4] += (vertices[4:] - vertices[:4]) * (1 - height)
+                    choices.append((1.0 - depth * height, v))
+        else:
+            # A continuous supporting wall may be inferred down to an unobserved floor.
+            # Keep the aperture head and jambs and shorten only its lowest free edge.
+            up = -cameras[item["source_frame"]][:3, 1]
+            levels = vertices[:4] @ up
+            lower = levels < np.median(levels)
+            if (
+                lower.sum() != 2
+                or np.ptp(levels) < np.linalg.norm(np.ptp(vertices, axis=0)) * 0.18
+            ):
+                continue
+            bottom = np.flatnonzero(lower)
+            top = np.flatnonzero(~lower)
+            for fraction in (0.10, 0.20, 0.35, 0.50, 0.65, 0.79):
+                v = vertices.copy()
+                for low in bottom:
+                    # Reversing front winding is legal for these solids.
+                    high = next(q for q in top if (q - low) % 4 in (1, 3))
+                    shift = (v[high] - v[low]) * fraction
+                    v[[low, low + 4]] += shift
+                choices.append((fraction, v))
+        best = None
+        for cost, v in choices:
+            after = _intersects(v, basis_idx, origins, targets)
+            corrected = np.count_nonzero(before & ~after)
+            if corrected and not np.any(after & ~before):
+                rank = (corrected, -cost)
+                if best is None or rank > best[0]:
+                    best = (rank, v, after)
+        if best is None:
+            continue
+        (corrected, _), v, after = best
+        item["vertices"] = v.round(6).tolist()
+        result.append(
+            dict(
+                kind=kind,
+                source_frame=item["source_frame"],
+                seat_row=item.get("seat_row"),
+                cleared_rays=int(corrected),
+                remaining_rays=int(after.sum()),
+                source_views=np.unique(frame_ids[before & ~after]).tolist(),
+            )
+        )
+    return result

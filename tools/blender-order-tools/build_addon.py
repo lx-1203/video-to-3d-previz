@@ -45,6 +45,7 @@ FILES = (
     "orderflow/fullclip_people_heads.py",
     "orderflow/fullclip_people_observe.py",
     "orderflow/fullclip_people_partial.py",
+    "orderflow/fullclip_people_partial_motion.py",
     "orderflow/fullclip_people_partial_pose.py",
     "orderflow/fullclip_people_posture.py",
     "orderflow/fullclip_people_regiontrack.py",

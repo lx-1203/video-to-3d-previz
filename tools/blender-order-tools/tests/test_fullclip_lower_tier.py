@@ -122,6 +122,51 @@ class TierDepthTest(unittest.TestCase):
             np.testing.assert_equal(ob.matrix_world, np.eye(4))
         self.assertEqual(self.scene.frame_current, 31)
 
+    def test_monocular_tier_scale_preserves_other_storey_and_measured_floor(self):
+        protected = Object("landing", reconstruction_kind="Room floor", source_observations=[0, 5])
+        foundation = Object("floor", reconstruction_kind="Room floor")
+        self.scene.objects.extend([protected, foundation])
+        self.modules["bpy"].context = SimpleNamespace(
+            view_layer=SimpleNamespace(update=lambda: None)
+        )
+        for f in self.frames:
+            f["actors"][1]["partial_body_track"] = {
+                "association": "shot_local_source_extension",
+                "visible_bbox": [75, 90, 110, 140],
+            }
+
+        def measured(scene, camera, rig, actor, frame, width, height):
+            return {
+                "f": frame,
+                "root": np.zeros(3),
+                "loc": np.array([0, 0, 15]),
+                "view": self.view,
+                "upper": [9.0],
+                "lower": [8.8],
+                "desired": 12.0,
+                "uv": np.array([95, 100]),
+            }
+
+        with (
+            patch.dict(sys.modules, self.modules),
+            patch.object(
+                lower,
+                "_context",
+                return_value=({(0, 0): [np.array([0, 0, 9])]}, [self.view, self.view]),
+            ),
+            patch.object(lower, "_measure", side_effect=measured),
+            patch.object(lower, "_visible_seats", return_value={}),
+            patch.object(lower, "_visibility_ratio", return_value=1.0),
+        ):
+            result = lower.fit_lower_tier(self.scene, None, self.people, self.binding)
+        self.assertAlmostEqual(result["L"]["tier_scale"], 4 / 3, places=4)
+        np.testing.assert_allclose(self.chair.matrix_world, foundation.matrix_world)
+        self.assertAlmostEqual(self.chair.matrix_world[0, 0], 4 / 3)
+        for ob in [protected, self.upper, self.other]:
+            np.testing.assert_equal(ob.matrix_world, np.eye(4))
+            self.assertEqual(ob.keys, [])
+        np.testing.assert_equal(self.lower.scale, np.ones(3))
+
     def test_source_shoulder_must_remain_within_observed_outline(self):
         box = np.array([10, 20, 30, 60])
         good = {"partial_body_track": {"shoulder_uv": [16, 24]}}

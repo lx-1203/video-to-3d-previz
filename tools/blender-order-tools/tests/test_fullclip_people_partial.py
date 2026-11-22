@@ -57,9 +57,7 @@ class PartialBodyTest(unittest.TestCase):
             )
 
         def march(images, rows, start, end, a, det, pose):
-            return [
-                rec(start, f) for f in range(start - 1, 10 if start == 20 else 3, -1)
-            ]
+            return [rec(start, f) for f in range(start - 1, 10 if start == 20 else 3, -1)]
 
         with patch.object(partial, "_march", march):
             out = partial._extend_edge({}, [], 20, 4, seed, None, None)
@@ -83,9 +81,7 @@ class PartialBodyTest(unittest.TestCase):
                 x0, y0, x1, y1 = map(float, (xs.min(), ys.min(), xs.max(), ys.max()))
                 return [
                     dict(class_id=0, score=0.82, bbox=[x0, y0, x1, y1]),
-                    dict(
-                        class_id=1, score=0.74, bbox=[x0, y0, x1, y0 + (y1 - y0) * 0.45]
-                    ),
+                    dict(class_id=1, score=0.74, bbox=[x0, y0, x1, y0 + (y1 - y0) * 0.45]),
                 ]
 
         class Pose:
@@ -136,14 +132,10 @@ class PartialBodyTest(unittest.TestCase):
         ]
         row = dict(shot_id="same", actors=people)
         self.assertFalse(partial._available(row, np.array([20, 9, 65, 60]), "lower"))
-        self.assertFalse(
-            partial._available(row, np.array([100, 79, 141, 126]), "upper")
-        )
+        self.assertFalse(partial._available(row, np.array([100, 79, 141, 126]), "upper"))
         row_without_lower = dict(row, actors=[people[0]])
         self.assertTrue(
-            partial._available(
-                row_without_lower, np.array([100, 79, 141, 126]), "lower"
-            )
+            partial._available(row_without_lower, np.array([100, 79, 141, 126]), "lower")
         )
         self.assertEqual([p["track_id"] for p in row["actors"]], ["upper", "lower"])
 

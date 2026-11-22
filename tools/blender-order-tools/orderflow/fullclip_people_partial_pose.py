@@ -2,6 +2,11 @@
 
 import numpy as np
 
+if __package__:
+    from .fullclip_people_partial_motion import stabilize_partial_motion
+else:
+    from fullclip_people_partial_motion import stabilize_partial_motion
+
 
 def _unit(v):
     return v / max(1e-8, np.linalg.norm(v))
@@ -188,3 +193,4 @@ def apply_partial_posture(entries, profile):
             face_uv=(box[:2] + face * wh).round(2).tolist(),
             relative_depth_observed=False,
         )
+    stabilize_partial_motion(entries, profile, _sample)

@@ -133,7 +133,7 @@ def compose(params, foreground_gauge=None):
     info["grille_registration"] = register_fixed_grilles(scene, camera)
     from orderflow.fullclip_lower_tier import fit_lower_tier
 
-    info["partial_tier_depth"] = fit_lower_tier(scene, camera, people, info)
+    info["partial_tier_depth"] = fit_lower_tier(scene, camera, people, info, source_config=cfg)
     from orderflow.fullclip_keyframes import reduce_pose_keys
 
     info["pose_keys"] = {
@@ -185,6 +185,9 @@ def compose(params, foreground_gauge=None):
     scene["estimated_scene"] = True
     scene["local_visual_inference"] = True
     scene["language_model_calls"] = 0
+    from orderflow.fullclip_contact_audit import measure_final_support
+
+    info["final_lower_limb_support"] = measure_final_support(scene, info)
     prepare_workspace(scene, info, manifest["shots"])
     bpy.context.preferences.filepaths.save_version = 0
     blend = root / "preview.blend"

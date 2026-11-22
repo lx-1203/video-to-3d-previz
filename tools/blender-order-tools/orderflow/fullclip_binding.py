@@ -225,6 +225,28 @@ def bridge_short_observations(sequence):
     return result
 
 
+def camera_root_locations(samples, bridges, backtracked=()):
+    """Fit observed root positions first, then join those final positions across verified gaps."""
+    fitted = []
+    for n, (frame, _, _, _, loc, anchor_head) in enumerate(samples):
+        if n not in bridges and not anchor_head:
+            neighbors = [
+                s[4].y
+                for s in samples[max(0, n - 2) : n + 3]
+                if abs(s[0] - frame) <= 2 and s[0] not in backtracked
+            ]
+            if len(neighbors) > 1:
+                median = float(np.median(neighbors))
+                if abs(median - loc.y) < 0.25 * loc.y:
+                    loc = loc * (median / max(loc.y, 1e-6))
+        fitted.append(loc)
+    # Both ends must be exactly the camera-local positions that will be keyed.
+    # Using the raw depths here can briefly send the rig behind a static wall.
+    for n, (lo, hi, t, _) in bridges.items():
+        fitted[n] = fitted[lo].lerp(fitted[hi], t)
+    return fitted
+
+
 def fit_position(actor, landmarks, data, projection, human_height, anchor_head):
     w, h = data["width"], data["height"]
     p = projection
@@ -383,6 +405,7 @@ def bind(
                     obj.keyframe_insert(data_path=prop, frame=f)
         rig.scale = (unit_scale / meters_per_unit,) * 3
         samples = []
+        intrinsics = []
         bridges = bridge_short_observations(seq)
         from .fullclip_torso_depth import torso_track
         from .fullclip_scene import _shot
@@ -415,6 +438,14 @@ def bind(
             deps = bpy.context.evaluated_depsgraph_get()
             ce = camera.evaluated_get(deps)
             proj = ce.calc_matrix_camera(deps, x=data["width"], y=data["height"])
+            intrinsics.append(
+                (
+                    proj[0][0] * data["width"] / 2,
+                    proj[1][1] * data["height"] / 2,
+                    (1 - proj[0][2]) * data["width"] / 2,
+                    (1 + proj[1][2]) * data["height"] / 2,
+                )
+            )
             axes = torso_axes.get(i)
             observation = {}
             if body_sizes is not None:
@@ -447,16 +478,26 @@ def bind(
             samples.append(
                 (i, pose, rotation, ce.matrix_world.translation.copy(), loc, anchor_head)
             )
-        for n, (i, pose, rotation, origin_world, loc, anchor_head) in enumerate(samples):
-            # Suppress isolated root-depth jitter using only adjacent frames of this same track.
-            neighbors = [s[4] for s in samples[max(0, n - 2) : n + 3] if abs(s[0] - i) <= 2]
-            if n in bridges:
-                lo, hi, t, _ = bridges[n]
-                loc = samples[lo][4].lerp(samples[hi][4], t)
-            elif len(neighbors) > 1 and not anchor_head:
-                median = float(np.median([q.y for q in neighbors]))
-                if abs(median - loc.y) < 0.25 * loc.y:
-                    loc = loc * (median / max(loc.y, 1e-6))
+        positions = camera_root_locations(
+            samples, bridges, {i for i, a in seq if a["bbox_kind"] == "backtracked_clothing"}
+        )
+        lookup = {i: n for n, (i, _) in enumerate(seq)}
+        for n, (_, actor) in enumerate(seq):
+            if actor["bbox_kind"] != "backtracked_clothing":
+                continue
+            support = actor["temporal_support"]
+            donor = lookup[support["source_frames"][1]]
+            # Preserve the fixed rig size. The source-derived displacement is
+            # a screen translation of the same body, with unknown depth.
+            loc = positions[donor].copy()
+            du, dv = support["offset_uv"]
+            fx, fy, cx, cy = intrinsics[n]
+            fx0, fy0, cx0, cy0 = intrinsics[donor]
+            u, v = cx0 + fx0 * loc.x / loc.y, cy0 - fy0 * loc.z / loc.y
+            loc.x = (u + du - cx) * loc.y / fx
+            loc.z = (cy - v - dv) * loc.y / fy
+            positions[n] = loc
+        for (i, pose, rotation, origin_world, _, _), loc in zip(samples, positions):
             rig.location = origin_world + rotation @ (loc * rig.scale.x)
             rig.rotation_mode = "QUATERNION"
             old = rig.rotation_quaternion.copy()

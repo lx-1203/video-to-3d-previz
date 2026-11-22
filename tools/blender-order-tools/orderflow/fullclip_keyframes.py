@@ -36,6 +36,19 @@ def action_curves(action):
     ]
 
 
+def _key_tolerance(path, planted):
+    rotation = path.endswith("rotation_quaternion")
+    if planted and (
+        path in {"location", "rotation_quaternion"}
+        or path.startswith(
+            ('pose.bones["DEF-spine', 'pose.bones["DEF-thigh.', 'pose.bones["DEF-shin.')
+        )
+    ):
+        # The positional error at the sole accumulates along the FK chain.
+        return 0.00008 if rotation else 0.0001
+    return 0.005 if rotation else 0.002
+
+
 def reduce_pose_keys(rig):
     groups = defaultdict(list)
     for curve in action_curves(rig.animation_data.action):
@@ -56,6 +69,7 @@ def reduce_pose_keys(rig):
             continue
         t = arrays[0][:, 0]
         val = np.column_stack([v[:, 1] for v in arrays])
+        tolerance = _key_tolerance(path, rig.get("orderflow_ground_contact_precision", False))
         keep = set()
         # No simplification across a break in measured visibility.
         for interval in np.split(np.arange(len(t)), np.flatnonzero(np.diff(t) > 1) + 1):
@@ -67,7 +81,7 @@ def reduce_pose_keys(rig):
                     for i in retained_samples(
                         t[interval],
                         val[interval],
-                        0.005 if path.endswith("rotation_quaternion") else 0.002,
+                        tolerance,
                     )
                 )
         for curve, arr in zip(curves, arrays):

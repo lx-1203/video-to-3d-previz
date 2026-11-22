@@ -272,6 +272,10 @@ def fit_contact(scene, camera, rig, track, width, height, view_for):
     for ids in runs:
         if len(ids) >= 8:
             segment = [track[k] for k in ids]
-            entry = _run(scene, camera, rig, mesh, segment, width, height, view_for, rules)
+            from .fullclip_contact_rig import fit_plant
+
+            entry = fit_plant(scene, camera, rig, mesh, segment, width, height, view_for, rules)
+            if entry is None:
+                entry = _run(scene, camera, rig, mesh, segment, width, height, view_for, rules)
             results.append({"source_first": segment[0][0], "source_last": segment[-1][0], **entry})
     return results

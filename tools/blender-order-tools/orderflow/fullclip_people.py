@@ -192,6 +192,11 @@ def run(
         row["rejected_actors"] = [a for a in row["actors"] if not a["renderable"]]
         row["actors"] = [a for a in row["actors"] if a["renderable"]]
     label_appearance(video, frames)
+    if __package__:
+        from .fullclip_people_reveals import extend_reveals
+    else:
+        from fullclip_people_reveals import extend_reveals
+    extend_reveals(video, frames, width, height)
     coverage = {}
     for shot, (start, end) in enumerate(zip(cuts, cuts[1:]), 1):
         part = frames[start:end]

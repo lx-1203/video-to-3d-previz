@@ -77,7 +77,9 @@ class TierDepthTest(unittest.TestCase):
             patch.dict(sys.modules, self.modules),
             patch.object(lower, "_context") as context,
         ):
-            self.assertEqual(lower.fit_lower_tier(self.scene, None, self.people, self.binding), {})
+            self.assertEqual(
+                lower.fit_lower_tier(self.scene, None, self.people, self.binding), {}
+            )
             context.assert_not_called()
         for o in self.scene.objects:
             np.testing.assert_equal(o.matrix_world, np.eye(4))
@@ -124,7 +126,9 @@ class TierDepthTest(unittest.TestCase):
         self.assertEqual(self.scene.frame_current, 31)
 
     def test_monocular_tier_scale_preserves_other_storey_and_measured_floor(self):
-        protected = Object("landing", reconstruction_kind="Room floor", source_observations=[0, 5])
+        protected = Object(
+            "landing", reconstruction_kind="Room floor", source_observations=[0, 5]
+        )
         foundation = Object("floor", reconstruction_kind="Room floor")
         self.scene.objects.extend([protected, foundation])
         self.modules["bpy"].context = SimpleNamespace(
@@ -167,6 +171,93 @@ class TierDepthTest(unittest.TestCase):
             np.testing.assert_equal(ob.matrix_world, np.eye(4))
             self.assertEqual(ob.keys, [])
         np.testing.assert_equal(self.lower.scale, np.ones(3))
+
+    def test_rejected_static_floor_is_removed_before_building_next_candidate(self):
+        from importlib import import_module
+
+        fullclip_tier_floor = import_module("orderflow.fullclip_tier_floor")
+        fullclip_tier_parallax = import_module("orderflow.fullclip_tier_parallax")
+
+        floor = Object("floor", reconstruction_kind="Room floor")
+        self.chair["reconstruction_kind"] = "Seat back"
+        self.scene.objects.append(floor)
+        self.modules["bpy"].context = SimpleNamespace(
+            view_layer=SimpleNamespace(update=lambda: None)
+        )
+        camera = SimpleNamespace(matrix_world=SimpleNamespace(translation=np.zeros(3)))
+        for row in self.frames:
+            row["actors"][1]["partial_body_track"] = {
+                "association": "shot_local_source_extension",
+                "visible_bbox": [75, 90, 110, 140],
+            }
+        active = []
+        scales = []
+
+        def build(scene, floors, members, center, factor, origins):
+            self.assertFalse(active)
+            np.testing.assert_array_equal(floor.matrix_world, np.eye(4))
+            self.assertEqual(scene.frame_current, 1)
+            self.assertEqual(len(origins), 9)
+            active.append(factor)
+            floor.matrix_world = np.eye(4) * factor
+            scales.append(factor)
+            return list(active), {"factor": factor}
+
+        def discard(children):
+            self.assertEqual(children, active)
+            active.clear()
+
+        def check(scene, refs, center, factor, names):
+            self.assertEqual(active, [factor])
+            self.assertEqual(names, {"chair"})
+            return {0: (60 if len(scales) == 1 else 99, 100)}
+
+        with (
+            patch.dict(sys.modules, self.modules),
+            patch.object(
+                lower,
+                "_context",
+                return_value=({(0, 0): [np.array([0, 0, 9])]}, [self.view, self.view]),
+            ),
+            patch.object(
+                lower,
+                "_measure",
+                return_value={"upper": [9.0], "lower": [8.8], "desired": 12.0},
+            ),
+            patch.object(lower, "_visible_seats", return_value={}),
+            patch.object(lower, "_visibility_counts", side_effect=check),
+            patch.object(lower, "_place_actor", return_value=[{"frame": 0}]),
+            patch.object(
+                fullclip_tier_parallax,
+                "measure",
+                return_value={"state": "source_supports_expansion"},
+            ),
+            patch.object(fullclip_tier_floor, "build", side_effect=build),
+            patch.object(fullclip_tier_floor, "discard", side_effect=discard),
+        ):
+            result = lower.fit_lower_tier(
+                self.scene,
+                camera,
+                self.people,
+                self.binding,
+                source_config={"source": "test"},
+            )["L"]
+        self.assertEqual(
+            [q["accepted"] for q in result["static_scale_trials"]], [False, True]
+        )
+        self.assertEqual(
+            result["static_scale_trials"][0]["visible_seat_rays_by_source_frame"][0],
+            (60, 100),
+        )
+        self.assertEqual(result["static_floor_partition"], {"factor": scales[-1]})
+        self.assertEqual(active, scales[-1:])
+        self.assertAlmostEqual(scales[-1], 1 + (scales[0] - 1) * 0.65)
+
+    def test_visibility_is_resolved_to_integer_witnesses_in_every_view(self):
+        self.assertTrue(lower._retains_seat_witnesses({0: (130, 137), 14: (26, 27)}))
+        self.assertFalse(lower._retains_seat_witnesses({0: (129, 137), 14: (27, 27)}))
+        self.assertFalse(lower._retains_seat_witnesses({14: (4, 5)}))
+        self.assertFalse(lower._retains_seat_witnesses({}))
 
     def test_source_shoulder_must_remain_within_observed_outline(self):
         box = np.array([10, 20, 30, 60])

@@ -13,7 +13,7 @@ try:
 except ImportError:
     av = None
 
-from orderflow.fullclip_keyframes import retained_samples
+from orderflow.fullclip_keyframes import retained_samples, _key_tolerance
 from orderflow.fullclip_inputs import image_observations, read_input_table
 from orderflow import core
 
@@ -23,6 +23,19 @@ class FullClipContracts(unittest.TestCase):
         times = np.arange(17)
         values = np.array([[min(i, 16 - i), -i] for i in times], float)
         self.assertEqual(retained_samples(times, values, 0.001), {0, 8, 16})
+
+    def test_small_planted_leg_correction_survives_key_reduction(self):
+        values = np.array([[0], [0.0008], [0]], dtype=float)
+        for path in ("location", 'pose.bones["DEF-thigh.L"].rotation_quaternion'):
+            with self.subTest(path=path):
+                self.assertEqual(
+                    retained_samples([0, 1, 2], values, _key_tolerance(path, True)), {0, 1, 2}
+                )
+                self.assertEqual(
+                    retained_samples([0, 1, 2], values, _key_tolerance(path, False)), {0, 2}
+                )
+        arm = 'pose.bones["DEF-forearm.R"].rotation_quaternion'
+        self.assertEqual(_key_tolerance(arm, True), _key_tolerance(arm, False))
 
     def test_prepared_data_rejects_shifted_source_pts(self):
         with tempfile.TemporaryDirectory() as tmp:
